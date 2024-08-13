@@ -12,19 +12,17 @@ namespace WinVim.OverlayWindows
     {
         // Input stuff
         HotkeyExample hotkeyExample;
-        private bool _ctrlPressed = false;
-        private bool _altPressed = false;
-        private bool _shiftPressed = false;
-        private bool _lPressed = false;
-
+        
         public MainWindow()
         {
             InitializeComponent();
             OnCreateModifyWindow();
              
+            // Add hotkey
             hotkeyExample = new HotkeyExample(this);
         }
 
+        // Modify initial window properties. Useid instead of XAML 
         private void OnCreateModifyWindow()
         {
             this.Title = "OverlayWindow";
@@ -38,13 +36,14 @@ namespace WinVim.OverlayWindows
             this.Visibility = Visibility.Hidden;
             this.Topmost = true;
 
-            // Not really needed, since the window is created invisible. Emergency thingy,
+            // Not really needed, since the window is created invisible. Emergency thingy, in case something hoes south
             this.Width = SystemParameters.PrimaryScreenWidth;
             this.Height = SystemParameters.PrimaryScreenHeight;
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
         
+        // Self-explanatory
         protected override void OnClosed(EventArgs e)
         {
             hotkeyExample.Unhook();

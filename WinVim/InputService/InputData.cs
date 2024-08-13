@@ -27,14 +27,14 @@ namespace WinVim.Input
         public static extern IntPtr GetModuleHandle(string lpModuleName);
 
         // DLL import for registering and unregistering global hotkeys
-        // Not used, since we use a custom hotkey logic
+        // Not used, since I use a custom hotkey logic
         [DllImport("user32.dll")]
         public static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
 
         [DllImport("user32.dll")]
         public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
-        // Constants for hotkey modifiers 
+        // Constants for hotkey modifiers, not used 
         public const uint MOD_ALT = 0x0001;
         public const uint MOD_CONTROL = 0x0002;
         public const uint MOD_SHIFT = 0x0004;
@@ -55,6 +55,6 @@ namespace WinVim.Input
 
         // Delegate for the hook procedure
         public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
-        // public IntPtr _hookID = IntPtr.Zero;
+        // public IntPtr _hookID = IntPtr.Zero; - needs to be included in each an every hook, because you know. Duh.
     }
 }
