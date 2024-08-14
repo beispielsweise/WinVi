@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media;
-using WinVim.Input;
+using WinVim.InputService;
+using WinVim.InputService.Handlers;
 
 namespace WinVim.UI
 {
@@ -10,15 +11,16 @@ namespace WinVim.UI
     /// </summary>
     public partial class OverlayWindow : Window
     {
-        private readonly HotkeyExample _hotkeyExample;
+        // private readonly HotkeyExample _hotkeyExample;
+        
+        private HookManager _hookManager;
 
         public OverlayWindow()
         {
             InitializeComponent();
             ModifyWindow();
 
-            // Add hotkey
-            _hotkeyExample = new HotkeyExample(this);
+            _hookManager = new HookManager(this);
         }
 
         // Modify initial window properties. Useid instead of XAML 
@@ -41,10 +43,9 @@ namespace WinVim.UI
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
-        // Create icon tray
         private void OnExit(object sender, EventArgs e)
         {
-            _hotkeyExample.Unhook();
+            _hookManager.Dispose();
         }
     }
 }
