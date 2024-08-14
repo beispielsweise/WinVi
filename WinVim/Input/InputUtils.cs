@@ -23,13 +23,13 @@ namespace WinVim.Input
         public static extern IntPtr GetModuleHandle(string lpModuleName);
 
         // Constants for the keyboard hook (states)
-        public const int WH_KEYBOARD_LL = 13;
-        public const int WM_KEYDOWN = 0x0100;
-        public const int WM_KEYUP = 0x0101;
-        public const int WM_SYSKEYDOWN = 0x0104;
+        internal const int WH_KEYBOARD_LL = 13;
+        internal const int WM_KEYDOWN = 0x0100;
+        internal const int WM_KEYUP = 0x0101;
+        internal const int WM_SYSKEYDOWN = 0x0104;
 
         // Delegate for the hook procedure
-        public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+        internal delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
         // public IntPtr _hookID = IntPtr.Zero; - needs to be included in each an every hook, because you know. Duh.
     }
 }

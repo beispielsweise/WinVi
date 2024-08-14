@@ -1,17 +1,17 @@
 ﻿using System.Windows;
 
-namespace WinVim.InputService.Handlers
+namespace WinVim.Input.Handlers
 {
     internal class ToggleWindowHandler
     {
         private readonly Window _window;
         
-        public ToggleWindowHandler (Window window)
+        internal ToggleWindowHandler (Window window)
         {
             _window = window;
         }
 
-        public void OnWindowToggle()
+        internal void OnWindowToggle()
         {
             if (_window.IsVisible)
             {

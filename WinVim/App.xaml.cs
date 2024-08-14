@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Windows;
+﻿using System.Windows;
+using WinVim.Input;
 using WinVim.UI.Tray;
 
 namespace WinVim
@@ -11,20 +9,27 @@ namespace WinVim
     /// </summary>
     public partial class App : Application
     {
-        TrayManager _trayManager;
+        private HookManager _hookManager;
+        private TrayManager _trayManager;
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
-            _trayManager = new TrayManager();
+            _hookManager = HookManager.Instance;
+            _trayManager = TrayManager.Instance;
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
             _trayManager.Dispose();
-
+            _hookManager.Dispose();
             base.OnExit(e);
+        }
+
+        internal HookManager GetHookManager()
+        {
+            return _hookManager;
         }
     }
 }

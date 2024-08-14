@@ -2,21 +2,23 @@
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
-using WinVim.Input;
-using WinVim.InputService.Handlers;
+using WinVim.Input.Handlers;
 using System.Text.RegularExpressions;
 
-namespace WinVim.InputService
+namespace WinVim.Input
 {
     /// <summary>
     /// A class responsible for getting system-wide keyboard presses. 
     /// Contains logic for Processing keypresses
+    /// Uses singleton pattern
     /// </summary>
-    internal class HookManager : IDisposable
+    internal class HookManager : IDisposable 
     {
+        private static HookManager _instance;
+        private static readonly object _instanceLock = new object();
+
         private IntPtr _hookID = IntPtr.Zero;
         private readonly InputUtils.LowLevelKeyboardProc _proc;
-
         private bool internalKeysDisabled = false;
 
         // Modifier buttons status fields
@@ -30,13 +32,44 @@ namespace WinVim.InputService
         /// Initialize keyboard hook and handlers 
         /// </summary>
         /// <param name="window">Instance of a window, needed to work with the overlay window itself </param>
-        public HookManager(Window window) 
+        private HookManager()
         {
             _proc = HookCallback;
             SetHook();
             
+            InitializeBackgroundHandlers();
+        }
+
+        public static HookManager Instance
+        {
+            get
+            {
+                lock (_instanceLock)
+                {
+                    _instance ??= new HookManager();
+                    return _instance;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Initializes handlers, that need a specific window to operate (changing the window parameters, values etc.)
+        /// Used in a WPF class, that needs to use these handlers
+        /// </summary>
+        /// <param name="window">Window: an instance of a window</param>
+        internal void InitializeWindowHandlers(Window window)
+        {
             // Initialize Handlers
             _toggleWindowHandler = new ToggleWindowHandler(window);
+        }
+        
+        /// <summary>
+        /// Initializes handlers, that don't need a specific window. 
+        /// Is a part of initial initialization
+        /// </summary>
+        private void InitializeBackgroundHandlers()
+        {
+
         }
 
         /// <summary>
@@ -69,8 +102,7 @@ namespace WinVim.InputService
             // When key state is changed, we do stuff
             if (nCode >= 0 && (wParam == (IntPtr)InputUtils.WM_KEYDOWN) || (wParam == (IntPtr)InputUtils.WM_SYSKEYDOWN))
             {
-                Console.WriteLine(vkString);
-                isHotkeyCombinationPressed(vkString, true);
+                IsHotkeyCombinationPressed(vkString, true);
                 // Check if the desired hotkey combination is pressed
                 if (_ctrlPressed && _altPressed && _shiftPressed)
                 {
@@ -83,7 +115,6 @@ namespace WinVim.InputService
                             break;
                     }
                 }
-
                 else // processing usual commands (1-2 consecutive keys) 
                 {
                     // This is THE STUPID. 
@@ -103,8 +134,7 @@ namespace WinVim.InputService
             }
             else if (nCode >= 0 && (wParam == (IntPtr)InputUtils.WM_KEYUP)) 
             {
-                Console.WriteLine(vkString);
-                isHotkeyCombinationPressed(vkString, false);
+                IsHotkeyCombinationPressed(vkString, false);
             }
             return InputUtils.CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
@@ -114,7 +144,7 @@ namespace WinVim.InputService
         /// </summary>
         /// <param name="vkCode">initial integer code value</param>
         /// <returns>string: corresponding string value</returns>
-        public static string ConvertKeyCodeToString(int vkCode)
+        internal static string ConvertKeyCodeToString(int vkCode)
         {
             return ((Keys)vkCode).
                 ToString().
@@ -127,7 +157,7 @@ namespace WinVim.InputService
         /// </summary>
         /// <param name="vkString"> string: with a lowercase character</param>
         /// <param name="isKeyDown">bool: is key pressed</param>
-        private void isHotkeyCombinationPressed(string vkString, bool isKeyDown)
+        private void IsHotkeyCombinationPressed(string vkString, bool isKeyDown)
         {
             // Hotkey mechanism logic
             switch (vkString)

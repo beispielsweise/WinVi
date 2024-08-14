@@ -61,8 +61,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="InputService\Handlers\ToggleWindowHandler.cs" />
-    <Compile Include="InputService\HookManager.cs" />
+    <Compile Include="Input\Handlers\ToggleWindowHandler.cs" />
+    <Compile Include="Input\HookManager.cs" />
+    <Compile Include="UiAutomation\FindMode.cs" />
     <Compile Include="UI\Tray\TrayManager.cs" />
     <Page Include="UI\OvelayWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -72,7 +73,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="InputService\InputUtils.cs" />
+    <Compile Include="Input\InputUtils.cs" />
     <Compile Include="UI\OvelayWindow.xaml.cs">
       <DependentUpon>OvelayWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

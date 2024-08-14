@@ -1,23 +1,21 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
-using WinVim.InputService;
 
 namespace WinVim.UI
 {
     /// <summary>
     /// Interaction logic for OverlayWindow.xaml
     /// </summary>
-    public partial class OverlayWindow : Window
+    partial class OverlayWindow : Window
     {
-        private HookManager _hookManager;
+        private static readonly App _app = (App)Application.Current;
 
         public OverlayWindow()
         {
             InitializeComponent();
-            ModifyWindow();
+            _app.GetHookManager().InitializeWindowHandlers(this);
 
-            _hookManager = new HookManager(this);
+            ModifyWindow();
         }
 
 
@@ -41,11 +39,6 @@ namespace WinVim.UI
             this.Width = SystemParameters.PrimaryScreenWidth;
             this.Height = SystemParameters.PrimaryScreenHeight;
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-        }
-
-        private void OnExit(object sender, EventArgs e)
-        {
-            _hookManager.Dispose();
         }
     }
 }
