@@ -3,27 +3,26 @@ using System.Windows;
 using System.Windows.Media;
 using WinVim.Input;
 
-namespace WinVim.OverlayWindows
+namespace WinVim.UI
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for OverlayWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class OverlayWindow : Window
     {
-        // Input stuff
-        HotkeyExample hotkeyExample;
-        
-        public MainWindow()
+        private readonly HotkeyExample _hotkeyExample;
+
+        public OverlayWindow()
         {
             InitializeComponent();
-            OnCreateModifyWindow();
-             
+            ModifyWindow();
+
             // Add hotkey
-            hotkeyExample = new HotkeyExample(this);
+            _hotkeyExample = new HotkeyExample(this);
         }
 
         // Modify initial window properties. Useid instead of XAML 
-        private void OnCreateModifyWindow()
+        private void ModifyWindow()
         {
             this.Title = "OverlayWindow";
 
@@ -31,7 +30,7 @@ namespace WinVim.OverlayWindows
             this.WindowStyle = WindowStyle.None;
             this.AllowsTransparency = true;
             this.Background = Brushes.Transparent;
-            
+
             // Invisible by default, always on top
             this.Visibility = Visibility.Hidden;
             this.Topmost = true;
@@ -42,13 +41,10 @@ namespace WinVim.OverlayWindows
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
-        
-        // Self-explanatory
-        protected override void OnClosed(EventArgs e)
+        // Create icon tray
+        private void OnExit(object sender, EventArgs e)
         {
-            hotkeyExample.Unhook();
-            base.OnClosed(e);
+            _hotkeyExample.Unhook();
         }
-
     }
 }

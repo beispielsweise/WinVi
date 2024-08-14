@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace WinVim.Input
 {
-    /**
-     * A class with external functions and constants for the input system
-     */
-    internal class InputData
+    /// <summary>
+    /// A class with external functions and constants for the input system
+    /// </summary>
+    internal class InputUtils
     {
         // Windows API functions
         // DLL import for getting keypresses

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
+using WinVim.UI.Tray;
 
 namespace WinVim
 {
@@ -13,5 +11,20 @@ namespace WinVim
     /// </summary>
     public partial class App : Application
     {
+        TrayManager _trayManager;
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            _trayManager = new TrayManager();
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            _trayManager.Dispose();
+
+            base.OnExit(e);
+        }
     }
 }

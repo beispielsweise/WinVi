@@ -41,6 +41,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -59,7 +61,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Overlay\MainWindow.xaml">
+    <Compile Include="UI\Tray\TrayManager.cs" />
+    <Page Include="UI\OvelayWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -68,9 +71,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="InputService\HotkeyExample.cs" />
-    <Compile Include="InputService\InputData.cs" />
-    <Compile Include="Overlay\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="InputService\InputUtils.cs" />
+    <Compile Include="UI\OvelayWindow.xaml.cs">
+      <DependentUpon>OvelayWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -99,6 +102,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TrayIcon.ico" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows;
-using WinVim.Input;
 
 namespace WinVim.Input
 {
@@ -17,7 +16,7 @@ namespace WinVim.Input
         private bool _lPressed = false;
 
         // Instance of a window to interract with 
-        private Window _window;
+        private readonly Window _window;
 
         public HotkeyExample(Window window)
         {
@@ -29,32 +28,32 @@ namespace WinVim.Input
         // Setting the hook, so that windows sees it
         private void SetHook()
         {
-            InputData.SetWindowsHookEx(InputData.WH_KEYBOARD_LL, HookCallback, InputData.GetModuleHandle(null), 0);
+            InputUtils.SetWindowsHookEx(InputUtils.WH_KEYBOARD_LL, HookCallback, InputUtils.GetModuleHandle(null), 0);
         }
     
         // When an event occures, this function is called
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             // When key state is changed, we do stuff
-            if (nCode >= 0 && (wParam == (IntPtr)InputData.WM_KEYDOWN || wParam == (IntPtr)InputData.WM_KEYUP))
+            if (nCode >= 0 && (wParam == (IntPtr)InputUtils.WM_KEYDOWN || wParam == (IntPtr)InputUtils.WM_KEYUP))
             {
                 // Read key pressed code
                 int vkCode = Marshal.ReadInt32(lParam);
-                bool isKeyDown = (wParam == (IntPtr)InputData.WM_KEYDOWN);
+                bool isKeyDown = (wParam == (IntPtr)InputUtils.WM_KEYDOWN);
 
                 // Hotkey mechanism logic
                 switch (vkCode)
                 {
-                    case InputData.VK_LCONTROL:
+                    case InputUtils.VK_LCONTROL:
                         _ctrlPressed = isKeyDown;
                         break;
-                    case InputData.VK_LMENU:
+                    case InputUtils.VK_LMENU:
                         _altPressed = isKeyDown;
                         break;
-                    case InputData.VK_LSHIFT:
+                    case InputUtils.VK_LSHIFT:
                         _shiftPressed = isKeyDown;
                         break;
-                    case InputData.VK_L:
+                    case InputUtils.VK_L:
                         _lPressed = isKeyDown;
                         break;
                 }
@@ -79,7 +78,7 @@ namespace WinVim.Input
                 }
             }
 
-            return InputData.CallNextHookEx(_hookID, nCode, wParam, lParam);
+            return InputUtils.CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
        
         // Self-explanatory
@@ -87,7 +86,7 @@ namespace WinVim.Input
         {
             if (_hookID != IntPtr.Zero)
             {
-                InputData.UnhookWindowsHookEx(_hookID);
+                InputUtils.UnhookWindowsHookEx(_hookID);
                 _hookID = IntPtr.Zero;
             }
         }
