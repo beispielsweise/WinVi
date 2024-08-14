@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Media;
 using WinVim.InputService;
-using WinVim.InputService.Handlers;
 
 namespace WinVim.UI
 {
@@ -11,8 +10,6 @@ namespace WinVim.UI
     /// </summary>
     public partial class OverlayWindow : Window
     {
-        // private readonly HotkeyExample _hotkeyExample;
-        
         private HookManager _hookManager;
 
         public OverlayWindow()
@@ -23,7 +20,10 @@ namespace WinVim.UI
             _hookManager = new HookManager(this);
         }
 
-        // Modify initial window properties. Useid instead of XAML 
+
+        /// <summary>
+        /// Modifies initial window properties. Used instead of XAML 
+        /// </summary>
         private void ModifyWindow()
         {
             this.Title = "OverlayWindow";
