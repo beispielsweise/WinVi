@@ -17,8 +17,8 @@ namespace WinVim
         {
             base.OnStartup(e);
 
-            _trayManager = TrayManager.Instance;
             _hookManager = HookManager.Instance; 
+            _trayManager = TrayManager.Instance;
         }
 
         protected override void OnExit(ExitEventArgs e)
