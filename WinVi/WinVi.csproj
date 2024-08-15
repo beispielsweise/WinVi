@@ -66,10 +66,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Input\Handlers\Hotkeys\FlyModeHandler.cs" />
+    <Compile Include="Input\Handlers\Hotkeys\TaskbarModeHandler.cs" />
+    <Compile Include="Input\Handlers\Hotkeys\ForceCloseWindow.cs" />
+    <Compile Include="Input\Handlers\Hotkeys\HotkeyBase.cs" />
     <Compile Include="Input\Handlers\Hotkeys\ToggleWindowHandler.cs" />
     <Compile Include="Input\HookManager.cs" />
-    <Compile Include="UiAutomation\FindMode.cs" />
     <Compile Include="UiAutomation\Taskbar\Taskbar.cs" />
     <Compile Include="UI\Tray\TrayManager.cs" />
     <Page Include="UI\OvelayWindow.xaml">

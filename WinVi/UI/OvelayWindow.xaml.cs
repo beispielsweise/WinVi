@@ -5,20 +5,27 @@ namespace WinVi.UI
 {
     /// <summary>
     /// Interaction logic for OverlayWindow.xaml
+    /// WIth a "handicaped" singleton pattern
     /// </summary>
     partial class OverlayWindow : Window
     {
         private static readonly App _app = (App)Application.Current;
+        private static OverlayWindow _instance;
 
         public OverlayWindow()
         {
             InitializeComponent();
             
-            if (_app.GetHookManager() != null) 
-                _app.GetHookManager().InitializeWindowHandlers(this);
             ModifyWindow();
         }
 
+        internal static OverlayWindow GetCurrentOverlayInstance()
+        {
+            if (_instance == null)
+                _instance = new OverlayWindow();
+            
+            return _instance;
+        }
 
         /// <summary>
         /// Modifies initial window properties. Used instead of XAML 

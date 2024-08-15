@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Windows;
 using System.Windows.Forms;
 using WinVi.Input.Handlers;
 using System.Text.RegularExpressions;
-using WinVi.UI;
 using WinVi.Input.Handlers.Hotkeys;
 
 namespace WinVi.Input
@@ -31,7 +29,8 @@ namespace WinVi.Input
         private bool _shiftPressed = false;
         
         private ToggleWindowHandler _toggleWindowHandler;
-        private FlyModeHandler _flyModeHandler;
+        private TaskbarModeHandler _taskbarModeHandler;
+        private ForceCloseWindow _forceCloseWindow;
 
         /// <summary>
         /// Initialize keyboard hook and handlers 
@@ -48,8 +47,6 @@ namespace WinVi.Input
             {
                 throw new ArgumentNullException();
             }
-
-            InitializeBackgroundHandlers();
         }
 
         public static HookManager Instance
@@ -69,22 +66,14 @@ namespace WinVi.Input
         /// Used in a WPF class, that needs to use these handlers
         /// </summary>
         /// <param name="window">Window: an instance of a window</param>
-        internal void InitializeWindowHandlers(OverlayWindow window)
+        internal void InitializeHotkeyHandlers()
         {
             // Initialize Handlers
-            _toggleWindowHandler = new ToggleWindowHandler(window);
-            _flyModeHandler = new FlyModeHandler(window);
+            _toggleWindowHandler = new ToggleWindowHandler();
+            _taskbarModeHandler = new TaskbarModeHandler();
+            _forceCloseWindow = new ForceCloseWindow();
         }
         
-        /// <summary>
-        /// Initializes handlers, that don't need a specific window. 
-        /// Is a part of initial initialization
-        /// </summary>
-        private void InitializeBackgroundHandlers()
-        {
-
-        }
-
         /// <summary>
         /// Sets a keyboard hook
         /// </summary>
@@ -119,17 +108,19 @@ namespace WinVi.Input
             {
                 IsHotkeyCombinationPressed(vkString, true);
 
-
                 // Check if the desired hotkey combination is pressed
                 if (_ctrlPressed && _altPressed && _shiftPressed)
                 {
                     switch (vkString)
                     {
                         case "l":
-                            _toggleWindowHandler.OnWindowToggle();
+                            _toggleWindowHandler.Execute();
                             break;
-                        case "i":
-                            // internalKeysDisabled = true;
+                        case "t":
+                            _taskbarModeHandler.Execute();
+                            break;
+                        case "q":
+                            _forceCloseWindow.Execute();
                             break;
                         default:
                             break;

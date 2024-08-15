@@ -29,6 +29,8 @@ namespace WinVi
                 _trayManager.SetIconStatus(TrayIconStatus.Error); 
                 _hookManager = null; 
             }
+
+            _hookManager.InitializeHotkeyHandlers();
         }
 
         protected override void OnExit(ExitEventArgs e)

@@ -4,16 +4,14 @@ using WinVi.UiAutomation.Taskbar;
 
 namespace WinVi.Input.Handlers.Hotkeys
 {
-    internal class FlyModeHandler
+    /// <summary>
+    /// A class responsible for TaskbarMode
+    /// </summary>
+    internal class TaskbarModeHandler : HotkeyBase
     {
-        private readonly OverlayWindow _window;
-        
-        internal FlyModeHandler(OverlayWindow window)
-        {
-            _window = window;
-        }
+        internal TaskbarModeHandler() : base() { }
 
-        internal void OnWindowToggle()
+        internal override void Execute()
         {
             try
             {
@@ -25,16 +23,17 @@ namespace WinVi.Input.Handlers.Hotkeys
                 Console.WriteLine("CRITICAL ERROR occured while trying to access Windows Taskbar");
             }
 
-            if (_window.IsVisible)
+            if (_overlayWindow.IsVisible)
             {
                 // Hide the window if it's currently visible
-                _window.CollapseWindow();
+                _overlayWindow.CollapseWindow();
             }
             else
             {
                 // Show the window if it's currently hidden
-                _window.ShowWindow();    
+                _overlayWindow.ShowWindow();    
             }
+
         }
     }
 }

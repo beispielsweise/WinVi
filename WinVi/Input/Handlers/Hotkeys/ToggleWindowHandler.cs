@@ -1,27 +1,28 @@
-﻿using WinVi.UI;
+﻿using WinVi.Input.Handlers.Hotkeys;
+using WinVi.UI;
 
 namespace WinVi.Input.Handlers
 {
-    internal class ToggleWindowHandler
+    /// <summary>
+    /// more of a test class, toggles the window on anf off
+    /// </summary>
+    internal class ToggleWindowHandler : HotkeyBase 
     {
-        private readonly OverlayWindow _window;
-        
-        internal ToggleWindowHandler (OverlayWindow window)
-        {
-            _window = window;
-        }
+                
+        internal ToggleWindowHandler() : base() { }
 
-        internal void OnWindowToggle()
+
+        internal override void Execute()
         {
-            if (_window.IsVisible)
+            if (_overlayWindow.IsVisible)
             {
                 // Hide the window if it's currently visible
-                _window.CollapseWindow();
+                _overlayWindow.CollapseWindow();
             }
             else
             {
                 // Show the window if it's currently hidden
-                _window.ShowWindow();    
+                _overlayWindow.ShowWindow();
             }
         }
     }
