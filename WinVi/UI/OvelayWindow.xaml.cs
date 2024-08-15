@@ -1,9 +1,7 @@
-﻿using System.Runtime.CompilerServices;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
-using WinVim.Input;
 
-namespace WinVim.UI
+namespace WinVi.UI
 {
     /// <summary>
     /// Interaction logic for OverlayWindow.xaml
@@ -16,7 +14,8 @@ namespace WinVim.UI
         {
             InitializeComponent();
             
-            _app.GetHookManager().InitializeWindowHandlers(this);
+            if (_app.GetHookManager() != null) 
+                _app.GetHookManager().InitializeWindowHandlers(this);
             ModifyWindow();
         }
 

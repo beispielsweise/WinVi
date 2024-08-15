@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WinVim.UiAutomation
+namespace WinVi.UiAutomation
 {
     internal class FindMode
     {

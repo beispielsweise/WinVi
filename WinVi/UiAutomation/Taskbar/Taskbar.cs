@@ -3,7 +3,7 @@ using System.CodeDom;
 using System.Collections.Generic;
 using System.Windows.Automation;
 
-namespace WinVim.UiAutomation.Taskbar
+namespace WinVi.UiAutomation.Taskbar
 {
     /// <summary>
     /// A class, that is responsible for finding and interracting with elements in Taskbar (Taskbar and Tray)

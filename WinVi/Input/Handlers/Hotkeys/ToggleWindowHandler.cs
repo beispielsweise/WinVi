@@ -1,6 +1,6 @@
-﻿using WinVim.UI;
+﻿using WinVi.UI;
 
-namespace WinVim.Input.Handlers
+namespace WinVi.Input.Handlers
 {
     internal class ToggleWindowHandler
     {

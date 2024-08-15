@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WinVim.Properties {
+namespace WinVi.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace WinVim.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WinVim.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WinVi.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -63,9 +63,9 @@ namespace WinVim.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon ErrorTrayIcon {
+        internal static System.Drawing.Icon ErrorWimVi {
             get {
-                object obj = ResourceManager.GetObject("ErrorTrayIcon", resourceCulture);
+                object obj = ResourceManager.GetObject("ErrorWimVi", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace WinVim.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon NormalTrayIcon {
+        internal static System.Drawing.Icon NormalWimVi {
             get {
-                object obj = ResourceManager.GetObject("NormalTrayIcon", resourceCulture);
+                object obj = ResourceManager.GetObject("NormalWimVi", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

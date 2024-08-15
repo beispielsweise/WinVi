@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows;
-using WinVim.Input;
-using WinVim.UI.Tray;
+using WinVi.Input;
+using WinVi.UI.Tray;
 
-namespace WinVim
+namespace WinVi
 {
     /// <summary>
     /// Interaction logic for App.xaml
@@ -17,8 +17,18 @@ namespace WinVim
         {
             base.OnStartup(e);
 
-            _hookManager = HookManager.Instance; 
+
             _trayManager = TrayManager.Instance;
+
+            try
+            {
+            _hookManager = HookManager.Instance; 
+            }
+            catch 
+            {
+                _trayManager.SetIconStatus(TrayIconStatus.Error); 
+                _hookManager = null; 
+            }
         }
 
         protected override void OnExit(ExitEventArgs e)

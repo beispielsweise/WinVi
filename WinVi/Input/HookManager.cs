@@ -2,12 +2,12 @@
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
-using WinVim.Input.Handlers;
+using WinVi.Input.Handlers;
 using System.Text.RegularExpressions;
-using WinVim.UI;
-using WinVim.Input.Handlers.Hotkeys;
+using WinVi.UI;
+using WinVi.Input.Handlers.Hotkeys;
 
-namespace WinVim.Input
+namespace WinVi.Input
 {
     /// <summary>
     /// A class responsible for getting system-wide keyboard presses. 
@@ -40,7 +40,14 @@ namespace WinVim.Input
         private HookManager()
         {
             _proc = HookCallback;
-            _hookID = SetHook();
+            try
+            {
+                _hookID = SetHook();
+            }
+            catch
+            {
+                throw new ArgumentNullException();
+            }
 
             InitializeBackgroundHandlers();
         }
@@ -84,6 +91,9 @@ namespace WinVim.Input
         private IntPtr SetHook()
         {
             IntPtr hookID = KeyboardUtilities.SetWindowsHookEx(KeyboardUtilities.WH_KEYBOARD_LL, _proc, KeyboardUtilities.GetModuleHandle(null), 0);
+            if (hookID == IntPtr.Zero)
+                throw new ArgumentNullException();
+
             return hookID;
         }
 

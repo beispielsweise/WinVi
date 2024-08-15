@@ -1,8 +1,8 @@
 ﻿using System;
-using WinVim.UI;
-using WinVim.UiAutomation.Taskbar;
+using WinVi.UI;
+using WinVi.UiAutomation.Taskbar;
 
-namespace WinVim.Input.Handlers.Hotkeys
+namespace WinVi.Input.Handlers.Hotkeys
 {
     internal class FlyModeHandler
     {

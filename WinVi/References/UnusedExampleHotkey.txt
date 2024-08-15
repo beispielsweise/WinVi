@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 
-namespace WinVim.Input
+namespace WinVi.Input
 {
     // Example class on how to use a hotkey. Custom-build system, CTRL + AHIFT + ALT + L
     internal class HotkeyExample

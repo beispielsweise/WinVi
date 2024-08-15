@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace WinVim.UI.Tray
+namespace WinVi.UI.Tray
 {
     internal enum TrayIconStatus
     {
@@ -25,8 +25,8 @@ namespace WinVim.UI.Tray
         {
             _trayIcon = new NotifyIcon
             {
-                Icon = Properties.Resources.NormalTrayIcon,
-                Text = "WinVim",
+                Icon = Properties.Resources.NormalWimVi,
+                Text = "WinVi",
                 Visible = true,
             };
 
@@ -56,11 +56,11 @@ namespace WinVim.UI.Tray
             switch (status)
             {
                 case TrayIconStatus.Normal:
-                    _trayIcon.Icon = Properties.Resources.NormalTrayIcon;
-                    _trayIcon.Text = "Note";
+                    _trayIcon.Icon = Properties.Resources.NormalWimVi;
+                    _trayIcon.Text = "WinVi";
                     break;
                 case TrayIconStatus.Error:
-                    _trayIcon.Icon = Properties.Resources.ErrorTrayIcon;
+                    _trayIcon.Icon = Properties.Resources.ErrorWimVi;
                     _trayIcon.Text = "Error";
                     break;
                 default:
