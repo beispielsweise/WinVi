@@ -19,6 +19,8 @@ namespace WinVim.Input
 
         private IntPtr _hookID = IntPtr.Zero;
         private readonly InputUtils.LowLevelKeyboardProc _proc;
+
+        // 
         private bool internalKeysDisabled = false;
 
         // Modifier buttons status fields

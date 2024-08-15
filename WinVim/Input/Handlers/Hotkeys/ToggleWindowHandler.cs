@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using WinVim.UiAutomation.Taskbar;
 
 namespace WinVim.Input.Handlers
 {
@@ -13,6 +14,8 @@ namespace WinVim.Input.Handlers
 
         internal void OnWindowToggle()
         {
+            Taskbar.GetTaskbarAppElements();
+
             if (_window.IsVisible)
             {
                 // Hide the window if it's currently visible

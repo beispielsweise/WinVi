@@ -52,6 +52,8 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -61,9 +63,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Input\Handlers\ToggleWindowHandler.cs" />
+    <Compile Include="Input\Handlers\Hotkeys\ToggleWindowHandler.cs" />
     <Compile Include="Input\HookManager.cs" />
     <Compile Include="UiAutomation\FindMode.cs" />
+    <Compile Include="UiAutomation\Taskbar\Taskbar.cs" />
     <Compile Include="UI\Tray\TrayManager.cs" />
     <Page Include="UI\OvelayWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -111,5 +114,6 @@
   <ItemGroup>
     <Resource Include="References\UnusedExampleHotkey.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
