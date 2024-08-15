@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Media;
+using WinVim.Input;
 
 namespace WinVim.UI
 {
@@ -13,8 +15,8 @@ namespace WinVim.UI
         public OverlayWindow()
         {
             InitializeComponent();
+            
             _app.GetHookManager().InitializeWindowHandlers(this);
-
             ModifyWindow();
         }
 
@@ -36,9 +38,21 @@ namespace WinVim.UI
             this.Topmost = true;
 
             // Not really needed, since the window is created invisible. Emergency thingy, in case something hoes south
+            this.Top = 0;
+            this.Left = 0;
             this.Width = SystemParameters.PrimaryScreenWidth;
             this.Height = SystemParameters.PrimaryScreenHeight;
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+        }
+
+        public void CollapseWindow()
+        {
+            this.Visibility = Visibility.Collapsed;
+        }
+
+        internal void ShowWindow()
+        {
+            this.Visibility = Visibility.Visible; 
         }
     }
 }

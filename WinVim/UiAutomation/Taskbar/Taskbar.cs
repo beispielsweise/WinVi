@@ -1,20 +1,30 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Windows.Automation;
 
 namespace WinVim.UiAutomation.Taskbar
 {
+    /// <summary>
+    /// A class, that is responsible for finding and interracting with elements in Taskbar (Taskbar and Tray)
+    /// </summary>
+    /// TODO: Add throwing exeptions everywhere, checks for Null
     internal class Taskbar
     {
-        // Variables with properties, that help indicate different UI Elements 
-        // ClassName
-        private static readonly string _cnTaskbarName = "Shell_TrayWnd";
+        // Variables with properties, that help indicate different UI Elements, placed from top to bottom
+        // _cn - ClassName
+        // _aid - AutomationID 
+
+        // Global taskbar
+        private static readonly string _cnGlobalTaskbarName = "Shell_TrayWnd";
         private static readonly string _cnAllTaskbarElements = "Windows.UI.Input.InputSite.WindowClass";
+
+        // Left side taskbar, system and user apps only
+        private static readonly string _aidTaskbarAppsFrame = "TaskbarFrame";
         private static readonly string _cnTaskbarSystemApps = "ToggleButton";
         private static readonly string _cnTaskbarUserApps = "Taskbar.TaskListButtonAutomationPeer";
 
-        // AutomationID 
-        private static readonly string _aidTaskbarFrame = "TaskbarFrame";
+        // Right side taskbar, tray icons
         private static readonly string _aidSystemTrayIcon = "SystemTrayIcon";
         private static readonly string _aidNotifyItemIcon = "NotifyItemIcon";
 
@@ -22,25 +32,26 @@ namespace WinVim.UiAutomation.Taskbar
         {
             AutomationElement taskbar = AutomationElement
                 .RootElement
-                .FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarName));
+                .FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnGlobalTaskbarName));
             taskbar = taskbar.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.ClassNameProperty, _cnAllTaskbarElements));
 
             return taskbar;
         }
 
+
         internal static void GetTaskbarAppElements()
         {
-            AutomationElement taskbar = GetTaskbar();
-            if (taskbar == null)
-            {
-                return;
-            }
+            AutomationElement taskbar = GetTaskbar()
+                ?? throw new ArgumentNullException(nameof(taskbar));
             
             taskbar = taskbar
-                .FindFirst(TreeScope.Subtree, new PropertyCondition(AutomationElement.AutomationIdProperty, _aidTaskbarFrame));
+                .FindFirst(TreeScope.Subtree, new PropertyCondition(AutomationElement.AutomationIdProperty, _aidTaskbarAppsFrame))
+                ?? throw new ArgumentNullException(nameof(taskbar));
+ 
 
             AutomationElementCollection taskbarSystemApps = taskbar
-                .FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarSystemApps));
+                .FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarSystemApps))
+                ?? throw new ArgumentNullException(nameof(taskbar));
             foreach (AutomationElement app in taskbarSystemApps)
             {
                 Console.WriteLine(app.Current.Name + "\n" +  
@@ -48,7 +59,8 @@ namespace WinVim.UiAutomation.Taskbar
             }
 
             AutomationElementCollection taskbarUserApps = taskbar
-                .FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarUserApps));
+                .FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarUserApps))
+                ?? throw new ArgumentNullException(nameof(taskbar));
             foreach (AutomationElement app in taskbarUserApps)
             {
                 Console.WriteLine(app.Current.Name + "\n" +  
@@ -61,6 +73,17 @@ namespace WinVim.UiAutomation.Taskbar
         {
             //
         }
+
+        public static void ClickTaskbarAppElement()
+        {
+
+        }
+
+        public static void ClickTaskbarTrayElement()
+        {
+
+        }
+
 
         /* DEBUG FUNCTION, DELETE!!! */
         private static void LogSubelements(AutomationElement element, bool more)

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using WinVim.Input;
 using WinVim.UI.Tray;
 
@@ -16,8 +17,8 @@ namespace WinVim
         {
             base.OnStartup(e);
 
-            _hookManager = HookManager.Instance;
             _trayManager = TrayManager.Instance;
+            _hookManager = HookManager.Instance; 
         }
 
         protected override void OnExit(ExitEventArgs e)

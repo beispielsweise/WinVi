@@ -3,6 +3,12 @@ using System.Windows.Forms;
 
 namespace WinVim.UI.Tray
 {
+    internal enum TrayIconStatus
+    {
+        Normal, 
+        Error,
+    }
+
     /// <summary>
     /// Tray manager, that is responsible for creating, managing and deleting system tray icon
     /// Uses singleton pattern
@@ -19,7 +25,7 @@ namespace WinVim.UI.Tray
         {
             _trayIcon = new NotifyIcon
             {
-                Icon = Properties.Resources.TrayIcon,
+                Icon = Properties.Resources.NormalTrayIcon,
                 Text = "WinVim",
                 Visible = true,
             };
@@ -44,7 +50,24 @@ namespace WinVim.UI.Tray
                 }
             }
         }
-        
+
+        public void SetIconStatus(TrayIconStatus status)
+        {
+            switch (status)
+            {
+                case TrayIconStatus.Normal:
+                    _trayIcon.Icon = Properties.Resources.NormalTrayIcon;
+                    _trayIcon.Text = "Note";
+                    break;
+                case TrayIconStatus.Error:
+                    _trayIcon.Icon = Properties.Resources.ErrorTrayIcon;
+                    _trayIcon.Text = "Error";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(status), status, null);
+            }
+        }
+
         public void OnExitTrayManager(object sender, EventArgs e)
         {
             _trayIcon?.Dispose();

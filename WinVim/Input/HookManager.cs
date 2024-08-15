@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Forms;
 using WinVim.Input.Handlers;
 using System.Text.RegularExpressions;
+using WinVim.UI;
+using WinVim.Input.Handlers.Hotkeys;
 
 namespace WinVim.Input
 {
@@ -17,8 +19,8 @@ namespace WinVim.Input
         private static HookManager _instance;
         private static readonly object _instanceLock = new object();
 
-        private IntPtr _hookID = IntPtr.Zero;
-        private readonly InputUtils.LowLevelKeyboardProc _proc;
+        private IntPtr _hookID;
+        private readonly KeyboardUtilities.LowLevelKeyboardProc _proc;
 
         // 
         private bool internalKeysDisabled = false;
@@ -29,6 +31,7 @@ namespace WinVim.Input
         private bool _shiftPressed = false;
         
         private ToggleWindowHandler _toggleWindowHandler;
+        private FlyModeHandler _flyModeHandler;
 
         /// <summary>
         /// Initialize keyboard hook and handlers 
@@ -37,8 +40,8 @@ namespace WinVim.Input
         private HookManager()
         {
             _proc = HookCallback;
-            SetHook();
-            
+            _hookID = SetHook();
+
             InitializeBackgroundHandlers();
         }
 
@@ -59,10 +62,11 @@ namespace WinVim.Input
         /// Used in a WPF class, that needs to use these handlers
         /// </summary>
         /// <param name="window">Window: an instance of a window</param>
-        internal void InitializeWindowHandlers(Window window)
+        internal void InitializeWindowHandlers(OverlayWindow window)
         {
             // Initialize Handlers
             _toggleWindowHandler = new ToggleWindowHandler(window);
+            _flyModeHandler = new FlyModeHandler(window);
         }
         
         /// <summary>
@@ -77,9 +81,10 @@ namespace WinVim.Input
         /// <summary>
         /// Sets a keyboard hook
         /// </summary>
-        private void SetHook()
+        private IntPtr SetHook()
         {
-           InputUtils.SetWindowsHookEx(InputUtils.WH_KEYBOARD_LL, _proc, InputUtils.GetModuleHandle(null), 0);
+            IntPtr hookID = KeyboardUtilities.SetWindowsHookEx(KeyboardUtilities.WH_KEYBOARD_LL, _proc, KeyboardUtilities.GetModuleHandle(null), 0);
+            return hookID;
         }
 
         /// <summary>
@@ -91,20 +96,20 @@ namespace WinVim.Input
         /// <returns>IntPtr</returns>
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            // Insure that the program is allowed to read keyboard inputs 
-            if (internalKeysDisabled)
-            {
-                return InputUtils.CallNextHookEx(_hookID, nCode, wParam, lParam);
-            }
-
             // Read key pressed code and parse it to string
             string vkString = ConvertKeyCodeToString(
                 Marshal.ReadInt32(lParam
                 ));
-            // When key state is changed, we do stuff
-            if (nCode >= 0 && (wParam == (IntPtr)InputUtils.WM_KEYDOWN) || (wParam == (IntPtr)InputUtils.WM_SYSKEYDOWN))
+
+            // Insure that the program is allowed to read keyboard inputs 
+            if (internalKeysDisabled)
+                return KeyboardUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
+
+            if (wParam == (IntPtr)KeyboardUtilities.WM_KEYDOWN || wParam == (IntPtr)KeyboardUtilities.WM_SYSKEYDOWN)
             {
                 IsHotkeyCombinationPressed(vkString, true);
+
+
                 // Check if the desired hotkey combination is pressed
                 if (_ctrlPressed && _altPressed && _shiftPressed)
                 {
@@ -113,32 +118,35 @@ namespace WinVim.Input
                         case "l":
                             _toggleWindowHandler.OnWindowToggle();
                             break;
+                        case "i":
+                            // internalKeysDisabled = true;
+                            break;
                         default:
                             break;
                     }
+
+                    return KeyboardUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
                 }
-                else // processing usual commands (1-2 consecutive keys) 
+                // This is THE STUPID. 
+                // So this is only for usual keys, no F1-F12 are allowed, or tabs or anything like that. 
+                // That is because we are working with windows here and those buttons are crucial for the app to work. 
+                // So, to ensure we are working only with usual keys, we are:
+                // Checking if length is 1, then it is just a key like "l" or "k" etc
+                // Checking if there is "oem" included. This is just a keyboard shenanigan for a couple of characters, like comma or dot
+                // Checking if there is "d" followed by a number. This is by far the most idiotic one, while numbers 0-9 on a keyboard are labled as d0-d9
+                //      The same would go for F1-F12 keys, but we are not using them :)
+                //      So, to ensure that we are not missing out on any of em we are using a regex expression.
+                // ! THIS CAN BE OPTIMISED (so maybe fix it later)
+                if (vkString.Length == 1 || vkString.Contains("oem") || Regex.IsMatch(vkString, @"d\d+"))
                 {
-                    // This is THE STUPID. 
-                    // So this is only for usual keys, no F1-F12 are allowed, or tabs or anything like that. 
-                    // That is because we are working with windows here and those buttons are crucial for the app to work. 
-                    // So, to ensure we are working only with usual keys, we are:
-                    // Checking if length is 1, then it is just a key like "l" or "k" etc
-                    // Checking if there is "oem" included. This is just a keyboard shenanigan for a couple of characters, like comma or dot
-                    // Checking if there is "d" followed by a number. This is by far the most idiotic one, while numbers 0-9 on a keyboard are labled as d0-d9
-                    //      The same would go for F1-F12 keys, but we are not using them :)
-                    //      So, to ensure that we are not missing out on any of em we are using a regex expression.
-                    // ! THIS CAN BE OPTIMISED (so maybe fix it later)
-                    if (vkString.Length == 1 || vkString.Contains("oem") || Regex.IsMatch(vkString, @"d\d+"))
-                    {
-                    }
                 }
             }
-            else if (nCode >= 0 && (wParam == (IntPtr)InputUtils.WM_KEYUP)) 
+            else if (wParam == (IntPtr)KeyboardUtilities.WM_KEYUP)
             {
                 IsHotkeyCombinationPressed(vkString, false);
             }
-            return InputUtils.CallNextHookEx(_hookID, nCode, wParam, lParam);
+
+            return KeyboardUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
         /// <summary>
@@ -185,7 +193,7 @@ namespace WinVim.Input
         {
             if (_hookID != IntPtr.Zero)
             {
-                InputUtils.UnhookWindowsHookEx(_hookID);
+                KeyboardUtilities.UnhookWindowsHookEx(_hookID);
                 _hookID = IntPtr.Zero;
             }
         }

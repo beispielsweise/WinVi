@@ -6,7 +6,7 @@ namespace WinVim.Input
     /// <summary>
     /// A class with external functions and constants for the input system
     /// </summary>
-    internal class InputUtils
+    internal class KeyboardUtilities
     {
         // Windows API functions
         // DLL import for getting keypresses

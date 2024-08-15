@@ -63,9 +63,19 @@ namespace WinVim.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon TrayIcon {
+        internal static System.Drawing.Icon ErrorTrayIcon {
             get {
-                object obj = ResourceManager.GetObject("TrayIcon", resourceCulture);
+                object obj = ResourceManager.GetObject("ErrorTrayIcon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon NormalTrayIcon {
+            get {
+                object obj = ResourceManager.GetObject("NormalTrayIcon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
