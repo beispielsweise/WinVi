@@ -11,11 +11,12 @@ namespace WinVi.Input.Handlers.Hotkeys
     {
         internal TaskbarModeHandler() : base() { }
 
-        internal override void Execute()
+        internal static void Execute()
         {
             try
             {
                 Taskbar.GetTaskbarAppElements();
+                Taskbar.GetTaskbarTrayElements();
             }
             catch (ArgumentNullException)
             {
@@ -23,8 +24,7 @@ namespace WinVi.Input.Handlers.Hotkeys
                 Console.WriteLine("CRITICAL ERROR occured while trying to access Windows Taskbar");
             }
 
-            _overlayWindow.ShowWindow();
-
+            OverlayWindow.GetCurrentOverlayInstance().Show(); // some func
         }
     }
 }

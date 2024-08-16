@@ -69,7 +69,6 @@
     <Compile Include="Input\Handlers\Hotkeys\TaskbarModeHandler.cs" />
     <Compile Include="Input\Handlers\Hotkeys\ForceCloseWindow.cs" />
     <Compile Include="Input\Handlers\Hotkeys\HotkeyBase.cs" />
-    <Compile Include="Input\Handlers\Hotkeys\ToggleWindowHandler.cs" />
     <Compile Include="Input\HookManager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

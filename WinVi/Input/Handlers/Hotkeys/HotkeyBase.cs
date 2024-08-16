@@ -8,11 +8,6 @@ namespace WinVi.Input.Handlers.Hotkeys
     /// </summary>
     internal abstract class HotkeyBase
     {
-        protected OverlayWindow _overlayWindow;
-        internal HotkeyBase() { 
-            _overlayWindow = OverlayWindow.GetCurrentOverlayInstance();
-        }
-
-        internal abstract void Execute();
+        internal HotkeyBase() { }
     }
 }

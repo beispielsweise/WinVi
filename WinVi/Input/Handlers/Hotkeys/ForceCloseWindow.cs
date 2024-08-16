@@ -15,9 +15,9 @@ namespace WinVi.Input.Handlers.Hotkeys
     {
         internal ForceCloseWindow() : base() { }
 
-        internal override void Execute()
+        internal static void Execute()
         {
-            _overlayWindow.CollapseWindow();
+            OverlayWindow.GetCurrentOverlayInstance().CollapseWindow();
         }
     }
 }

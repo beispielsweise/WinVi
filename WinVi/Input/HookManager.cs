@@ -30,10 +30,6 @@ namespace WinVi.Input
         private bool _altPressed = false;
         private bool _shiftPressed = false;
         
-        private ToggleWindowHandler _toggleWindowHandler;
-        private TaskbarModeHandler _taskbarModeHandler;
-        private ForceCloseWindow _forceCloseWindow;
-
         /// <summary>
         /// Initialize keyboard hook and handlers 
         /// </summary>
@@ -49,8 +45,6 @@ namespace WinVi.Input
             {
                 throw new ArgumentNullException();
             }
-
-            InitializeHotkeyHandlers();
         }
 
         public static HookManager Instance
@@ -70,6 +64,7 @@ namespace WinVi.Input
         /// Used in a WPF class, that needs to use these handlers
         /// </summary>
         /// <param name="window">Window: an instance of a window</param>
+        /*
         internal void InitializeHotkeyHandlers()
         {
             // Initialize Handlers
@@ -77,6 +72,7 @@ namespace WinVi.Input
             _taskbarModeHandler = new TaskbarModeHandler();
             _forceCloseWindow = new ForceCloseWindow();
         }
+        */
         
         /// <summary>
         /// Sets a keyboard hook
@@ -101,31 +97,38 @@ namespace WinVi.Input
         /// </returns>
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            // Read key pressed code and parse it to string
             string vkString = ConvertKeyCodeToString(
                 Marshal.ReadInt32(lParam
                 ));
 
             if (wParam == (IntPtr)KeyboardUtilities.WM_KEYDOWN || wParam == (IntPtr)KeyboardUtilities.WM_SYSKEYDOWN)
             {
-                CheckHotkeyPressed(vkString, true);
+                CheckHotkeyButtonPressed(vkString, true);
 
-                // Ensure that the hotkey combintation is not pressed
+                // If the hotkey combintation is not pressed AND insert mode is not active
                 // Process single-press buttons
-                if (!CheckHotkeyCombinationPressed())
+                if (!CheckHotkeyCombinationPressed() && !_isInsertModeEnabled)
                 {
-                    // If overlay window is opened, this is the shortcut to close it
-                    if (_isOverlayWindowOpened && vkString == "q")
+                    // If overlay window is opened, process only these keys
+                    if (_isOverlayWindowOpened)
                     {
-                        _isOverlayWindowOpened = false;
-                        _forceCloseWindow.Execute();
-                        TrayManager.SetIconStatus(TrayIconStatus.Normal);
-                        return (IntPtr)1;
+                        // shift modifier?
+                        switch (vkString)
+                        {
+                            case "escape":
+                                _isOverlayWindowOpened = false;
+                                ForceCloseWindow.Execute();
+                                TrayManager.SetIconStatus(TrayIconStatus.Normal);
+                                return (IntPtr)1;
+                            default:
+                                return KeyboardUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
+                        }
                     }
                 }
-                // if the hotkey combination is pressed
+                // If the hotkey combination is pressed
                 else
                 {
+                    // Logic for exiting the insert mode, ESC key
                     if (_isInsertModeEnabled)
                     {
                         if (vkString == "escape")
@@ -137,19 +140,15 @@ namespace WinVi.Input
                         return (IntPtr)1;
                     }
 
+                    // Process hotkeys
                     switch (vkString)
                     {
-                        /*case "q":
-                            _isOverlayWindowOpened = false;
-                            _forceCloseWindow.Execute();
-                            TrayManager.SetIconStatus(TrayIconStatus.Normal);
-                            return (IntPtr)1;*/
                         /*case "l":
                             _toggleWindowHandler.Execute();
                             return (IntPtr)1;*/
                         case "t":
                             _isOverlayWindowOpened = true;
-                            _taskbarModeHandler.Execute();
+                            TaskbarModeHandler.Execute();
                             TrayManager.SetIconStatus(TrayIconStatus.OverlayOn);
                             return (IntPtr)1;
                         case "i":
@@ -163,7 +162,7 @@ namespace WinVi.Input
             }
             else if (wParam == (IntPtr)KeyboardUtilities.WM_KEYUP)
             {
-                CheckHotkeyPressed(vkString, false);
+                CheckHotkeyButtonPressed(vkString, false);
             }
 
             return KeyboardUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
@@ -187,7 +186,7 @@ namespace WinVi.Input
         /// </summary>
         /// <param name="vkString"> string: with a lowercase character</param>
         /// <param name="isKeyDown">bool: is key pressed</param>
-        private void CheckHotkeyPressed(string vkString, bool isKeyDown)
+        private void CheckHotkeyButtonPressed(string vkString, bool isKeyDown)
         {
             // Hotkey mechanism logic
             switch (vkString)
