@@ -63,9 +63,9 @@ namespace WinVi.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon ErrorWimVi {
+        internal static System.Drawing.Icon CriticalError {
             get {
-                object obj = ResourceManager.GetObject("ErrorWimVi", resourceCulture);
+                object obj = ResourceManager.GetObject("CriticalError", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -73,9 +73,29 @@ namespace WinVi.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon NormalWimVi {
+        internal static System.Drawing.Icon InsertMode {
             get {
-                object obj = ResourceManager.GetObject("NormalWimVi", resourceCulture);
+                object obj = ResourceManager.GetObject("InsertMode", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Normal {
+            get {
+                object obj = ResourceManager.GetObject("Normal", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon OverlayOn {
+            get {
+                object obj = ResourceManager.GetObject("OverlayOn", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

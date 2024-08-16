@@ -7,6 +7,8 @@ namespace WinVi.UI.Tray
     {
         Normal, 
         Error,
+        InsertMode,
+        OverlayOn
     }
 
     /// <summary>
@@ -19,13 +21,13 @@ namespace WinVi.UI.Tray
         private static readonly object _instanceLock = new object();
 
         // Create tray instance
-        private NotifyIcon _trayIcon;
+        private static NotifyIcon _trayIcon;
 
         private TrayManager()
         {
             _trayIcon = new NotifyIcon
             {
-                Icon = Properties.Resources.NormalWimVi,
+                Icon = Properties.Resources.Normal,
                 Text = "WinVi",
                 Visible = true,
             };
@@ -51,17 +53,25 @@ namespace WinVi.UI.Tray
             }
         }
 
-        public void SetIconStatus(TrayIconStatus status)
+        public static void SetIconStatus(TrayIconStatus status)
         {
             switch (status)
             {
                 case TrayIconStatus.Normal:
-                    _trayIcon.Icon = Properties.Resources.NormalWimVi;
+                    _trayIcon.Icon = Properties.Resources.Normal;
                     _trayIcon.Text = "WinVi";
                     break;
                 case TrayIconStatus.Error:
-                    _trayIcon.Icon = Properties.Resources.ErrorWimVi;
-                    _trayIcon.Text = "Error";
+                    _trayIcon.Icon = Properties.Resources.CriticalError;
+                    _trayIcon.Text = "Critical Error";
+                    break;
+                case TrayIconStatus.InsertMode:
+                    _trayIcon.Icon = Properties.Resources.InsertMode;
+                    _trayIcon.Text = "Insert mode";
+                    break;
+                case TrayIconStatus.OverlayOn:
+                    _trayIcon.Icon = Properties.Resources.OverlayOn;
+                    _trayIcon.Text = "Overlay is on";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(status), status, null);

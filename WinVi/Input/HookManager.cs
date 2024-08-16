@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using WinVi.Input.Handlers;
 using System.Text.RegularExpressions;
 using WinVi.Input.Handlers.Hotkeys;
+using WinVi.UI.Tray;
 
 namespace WinVi.Input
 {
@@ -21,7 +22,8 @@ namespace WinVi.Input
         private readonly KeyboardUtilities.LowLevelKeyboardProc _proc;
 
         // 
-        private bool internalKeysDisabled = false;
+        private bool _isInsertModeEnabled= false;
+        private bool _isOverlayWindowOpened = false;
 
         // Modifier buttons status fields
         private bool _ctrlPressed = false;
@@ -47,6 +49,8 @@ namespace WinVi.Input
             {
                 throw new ArgumentNullException();
             }
+
+            InitializeHotkeyHandlers();
         }
 
         public static HookManager Instance
@@ -92,7 +96,9 @@ namespace WinVi.Input
         /// <param name="nCode"></param>
         /// <param name="wParam"></param>
         /// <param name="lParam"></param>
-        /// <returns>IntPtr</returns>
+        /// <returns>IntPtr(1): if the key is handeled by the program
+        /// IntPtr: KeyboardUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam) - pass the handling to other programs
+        /// </returns>
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             // Read key pressed code and parse it to string
@@ -100,51 +106,64 @@ namespace WinVi.Input
                 Marshal.ReadInt32(lParam
                 ));
 
-            // Insure that the program is allowed to read keyboard inputs 
-            if (internalKeysDisabled)
-                return KeyboardUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
-
             if (wParam == (IntPtr)KeyboardUtilities.WM_KEYDOWN || wParam == (IntPtr)KeyboardUtilities.WM_SYSKEYDOWN)
             {
-                IsHotkeyCombinationPressed(vkString, true);
+                CheckHotkeyPressed(vkString, true);
 
-                // Check if the desired hotkey combination is pressed
-                if (_ctrlPressed && _altPressed && _shiftPressed)
+                // Ensure that the hotkey combintation is not pressed
+                // Process single-press buttons
+                if (!CheckHotkeyCombinationPressed())
                 {
-                    switch (vkString)
+                    // If overlay window is opened, this is the shortcut to close it
+                    if (_isOverlayWindowOpened && vkString == "q")
                     {
-                        case "l":
-                            _toggleWindowHandler.Execute();
-                            break;
-                        case "t":
-                            _taskbarModeHandler.Execute();
-                            break;
-                        case "q":
-                            _forceCloseWindow.Execute();
-                            break;
-                        default:
-                            break;
+                        _isOverlayWindowOpened = false;
+                        _forceCloseWindow.Execute();
+                        TrayManager.SetIconStatus(TrayIconStatus.Normal);
+                        return (IntPtr)1;
+                    }
+                }
+                // if the hotkey combination is pressed
+                else
+                {
+                    if (_isInsertModeEnabled)
+                    {
+                        if (vkString == "escape")
+                        {
+                            _isInsertModeEnabled = false;
+                            TrayManager.SetIconStatus(TrayIconStatus.Normal);
+                        }
+
+                        return (IntPtr)1;
                     }
 
-                    return KeyboardUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
-                }
-                // This is THE STUPID. 
-                // So this is only for usual keys, no F1-F12 are allowed, or tabs or anything like that. 
-                // That is because we are working with windows here and those buttons are crucial for the app to work. 
-                // So, to ensure we are working only with usual keys, we are:
-                // Checking if length is 1, then it is just a key like "l" or "k" etc
-                // Checking if there is "oem" included. This is just a keyboard shenanigan for a couple of characters, like comma or dot
-                // Checking if there is "d" followed by a number. This is by far the most idiotic one, while numbers 0-9 on a keyboard are labled as d0-d9
-                //      The same would go for F1-F12 keys, but we are not using them :)
-                //      So, to ensure that we are not missing out on any of em we are using a regex expression.
-                // ! THIS CAN BE OPTIMISED (so maybe fix it later)
-                if (vkString.Length == 1 || vkString.Contains("oem") || Regex.IsMatch(vkString, @"d\d+"))
-                {
+                    switch (vkString)
+                    {
+                        /*case "q":
+                            _isOverlayWindowOpened = false;
+                            _forceCloseWindow.Execute();
+                            TrayManager.SetIconStatus(TrayIconStatus.Normal);
+                            return (IntPtr)1;*/
+                        /*case "l":
+                            _toggleWindowHandler.Execute();
+                            return (IntPtr)1;*/
+                        case "t":
+                            _isOverlayWindowOpened = true;
+                            _taskbarModeHandler.Execute();
+                            TrayManager.SetIconStatus(TrayIconStatus.OverlayOn);
+                            return (IntPtr)1;
+                        case "i":
+                            _isInsertModeEnabled = true;
+                            TrayManager.SetIconStatus(TrayIconStatus.InsertMode);
+                            return (IntPtr)1;
+                        default:
+                            return KeyboardUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
+                    }
                 }
             }
             else if (wParam == (IntPtr)KeyboardUtilities.WM_KEYUP)
             {
-                IsHotkeyCombinationPressed(vkString, false);
+                CheckHotkeyPressed(vkString, false);
             }
 
             return KeyboardUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
@@ -168,7 +187,7 @@ namespace WinVi.Input
         /// </summary>
         /// <param name="vkString"> string: with a lowercase character</param>
         /// <param name="isKeyDown">bool: is key pressed</param>
-        private void IsHotkeyCombinationPressed(string vkString, bool isKeyDown)
+        private void CheckHotkeyPressed(string vkString, bool isKeyDown)
         {
             // Hotkey mechanism logic
             switch (vkString)
@@ -190,6 +209,11 @@ namespace WinVi.Input
             }
         }
 
+        private bool CheckHotkeyCombinationPressed()
+        {
+            return _ctrlPressed && _altPressed && _shiftPressed;
+        }
+
         public void Dispose()
         {
             if (_hookID != IntPtr.Zero)
@@ -200,3 +224,22 @@ namespace WinVi.Input
         }
     }
 }
+
+
+
+// USELESS STUFF
+
+                // This is THE STUPID. 
+                // So this is only for usual keys, no F1-F12 are allowed, or tabs or anything like that. 
+                // That is because we are working with windows here and those buttons are crucial for the app to work. 
+                // So, to ensure we are working only with usual keys, we are:
+                // Checking if length is 1, then it is just a key like "l" or "k" etc
+                // Checking if there is "oem" included. This is just a keyboard shenanigan for a couple of characters, like comma or dot
+                // Checking if there is "d" followed by a number. This is by far the most idiotic one, while numbers 0-9 on a keyboard are labled as d0-d9
+                //      The same would go for F1-F12 keys, but we are not using them :)
+                //      So, to ensure that we are not missing out on any of em we are using a regex expression.
+                // ! THIS CAN BE OPTIMISED (so maybe fix it later)
+                //if (vkString.Length == 1 || vkString.Contains("oem") || Regex.IsMatch(vkString, @"d\d+"))
+                //{
+                //}
+

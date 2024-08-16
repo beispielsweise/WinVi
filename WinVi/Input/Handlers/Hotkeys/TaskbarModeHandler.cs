@@ -17,22 +17,13 @@ namespace WinVi.Input.Handlers.Hotkeys
             {
                 Taskbar.GetTaskbarAppElements();
             }
-            catch (ArgumentNullException) 
+            catch (ArgumentNullException)
             {
                 // Display CRITICAL ERROR MESSAGE
                 Console.WriteLine("CRITICAL ERROR occured while trying to access Windows Taskbar");
             }
 
-            if (_overlayWindow.IsVisible)
-            {
-                // Hide the window if it's currently visible
-                _overlayWindow.CollapseWindow();
-            }
-            else
-            {
-                // Show the window if it's currently hidden
-                _overlayWindow.ShowWindow();    
-            }
+            _overlayWindow.ShowWindow();
 
         }
     }
