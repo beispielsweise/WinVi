@@ -15,7 +15,6 @@ namespace WinVi.Input
     internal class HookManager : IDisposable 
     {
         private static readonly Lazy<HookManager> _instance = new Lazy<HookManager>(() => new HookManager(), true);
-        private static readonly object _instanceLock = new object();
 
         private IntPtr _hookID;
         private readonly HookUtilities.LowLevelKeyboardProc _proc;
