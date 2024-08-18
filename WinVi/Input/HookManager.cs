@@ -100,7 +100,7 @@ namespace WinVi.Input
                     }
                 }
                 // If the hotkey combination is pressed
-                else if (CheckHotkeyCombinationPressed())
+                else if (CheckHotkeyCombinationPressed() && !_isOverlayWindowOpened)
                 {
                     // Logic for exiting the insert mode, ESC key
                     if (_isInsertModeEnabled)

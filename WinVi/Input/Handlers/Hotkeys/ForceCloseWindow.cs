@@ -15,7 +15,7 @@ namespace WinVi.Input.Handlers.Hotkeys
     {
         internal static void Execute()
         {
-            OverlayWindow.Instance.CollapseWindow();
+            OverlayWindow.Instance.HideWindow();
         }
     }
 }

@@ -15,9 +15,11 @@ namespace WinVi.Input.Handlers.TaskbarMode
         {
             try
             {
-               Taskbar.GetTaskbarAppElements();
+                Taskbar.GetTaskbarAppElements();
                 // TODO: Add interraction with OverlayWindow 
-                                //Taskbar.GetTaskbarTrayElements();
+                // Taskbar.GetTaskbarTrayElements();
+                Taskbar.Instance.InvokeDictElement();
+                Taskbar.Instance.Dispose();
             }
             catch (ArgumentNullException)
             {
@@ -26,7 +28,8 @@ namespace WinVi.Input.Handlers.TaskbarMode
                 TrayManager.SetIconStatus(TrayIconStatus.CriticalError);
             }
 
-            OverlayWindow.Instance.Show(); // some func
+            OverlayWindow.Instance.Show();
+            
         }
     }
 }

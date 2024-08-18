@@ -33,7 +33,7 @@ namespace WinVi
 
             // Force initialize the Overlay window Instance and force Collapse it
             // Prevents a bug, where the Overlay window opens only on 2nd hotkey press.
-            OverlayWindow.Instance.CollapseWindow();
+            // OverlayWindow.Instance.HideWindow();
         }
 
         protected override void OnExit(ExitEventArgs e)

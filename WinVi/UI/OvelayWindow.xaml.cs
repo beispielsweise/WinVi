@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.ComponentModel;
+using System.Windows;
 using WinVi.Input;
 
 namespace WinVi.UI
@@ -51,14 +53,14 @@ namespace WinVi.UI
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
-        public void CollapseWindow()
+        public void HideWindow()
         {
-            this.Visibility = Visibility.Collapsed;
+            this.Hide();
         }
 
         internal void ShowWindow()
         {
-            this.Visibility = Visibility.Visible; 
+            this.Show(); 
         }
     }
 }

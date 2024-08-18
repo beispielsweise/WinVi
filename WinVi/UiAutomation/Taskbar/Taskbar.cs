@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Windows.Automation;
 
 namespace WinVi.UiAutomation.Taskbar
@@ -6,16 +8,12 @@ namespace WinVi.UiAutomation.Taskbar
     /// <summary>
     /// A class, that is responsible for finding and interracting with elements in Taskbar (Taskbar and Tray)
     /// </summary>
-    /// TODO: Add throwing exeptions everywhere, checks for Null
     internal class Taskbar : IDisposable
     {
         // Variables with properties, that help indicate different UI Elements, placed from top to bottom
         // _cn - ClassName
         // _aid - AutomationID 
-
-
-        // TODO: Re-wirte using a Singleton pattern, adding a global array of automation elements available (maybe add an abstract class or interface in the future)
-
+        private static readonly Lazy<Taskbar> _instance = new Lazy<Taskbar>(() => new Taskbar(), true);
 
         // Global taskbar
         private static readonly string _cnGlobalTaskbarName = "Shell_TrayWnd";
@@ -30,6 +28,12 @@ namespace WinVi.UiAutomation.Taskbar
         private static readonly string _aidSystemTrayIcon = "SystemTrayIcon";
         private static readonly string _aidNotifyItemIcon = "NotifyItemIcon";
 
+        // A dictionary, that stores current taskbar elements
+        private Dictionary<int, AutomationElement> _automationElementsDict = new Dictionary<int, AutomationElement>(); 
+
+        internal static Taskbar Instance => _instance.Value;
+
+        internal IReadOnlyDictionary<int, AutomationElement> AutomationElementsDict => _automationElementsDict;
 
         private static AutomationElement GetGlobalTaskbar()
         {
@@ -40,29 +44,35 @@ namespace WinVi.UiAutomation.Taskbar
             return taskbar;
         }
 
-        internal static AutomationElement[] GetTaskbarAppElements()
+        internal static void GetTaskbarAppElements()
         {
+            Instance._automationElementsDict ??= new Dictionary<int, AutomationElement>();   
+
             AutomationElement taskbar = GetGlobalTaskbar()
                 ?? throw new ArgumentNullException(nameof(taskbar));
-            
             taskbar = taskbar
                 .FindFirst(TreeScope.Subtree, new PropertyCondition(AutomationElement.AutomationIdProperty, _aidTaskbarAppsFrame))
                 ?? throw new ArgumentNullException(nameof(taskbar));
- 
+
+            int uniqueID = Instance._automationElementsDict.Count;
 
             AutomationElementCollection taskbarSystemApps = taskbar
                 .FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarSystemApps))
                 ?? throw new ArgumentNullException(nameof(taskbar));
+            foreach (AutomationElement element in taskbarSystemApps)
+            {
+                Instance._automationElementsDict.Add(uniqueID, element);
+                uniqueID++;
+            }
+
             AutomationElementCollection taskbarUserApps = taskbar
                 .FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarUserApps))
                 ?? throw new ArgumentNullException(nameof(taskbar));
-
-            AutomationElement[] appElementsArray = new AutomationElement[taskbarSystemApps.Count + taskbarUserApps.Count];
-
-            taskbarSystemApps.CopyTo(appElementsArray, 0);
-            taskbarUserApps.CopyTo(appElementsArray, taskbarSystemApps.Count);
-
-            return appElementsArray;
+            foreach (AutomationElement element in taskbarUserApps)
+            {
+                Instance._automationElementsDict.Add(uniqueID, element);
+                uniqueID++;
+            }
         }
 
         internal static void GetTaskbarTrayElements()
@@ -70,51 +80,14 @@ namespace WinVi.UiAutomation.Taskbar
             //
         }
 
-        public static void Invokelement(AutomationElement el)
+        public void InvokeDictElement()
         {
-            
+            Console.WriteLine(_automationElementsDict[1].Current.Name);
         }
 
         public void Dispose()
         {
-
-        }
-
-        /* DEBUG FUNCTION, DELETE!!! */
-        private static void LogSubelements(AutomationElement element, bool more)
-        {
-            if (element == null)
-            {
-                Console.WriteLine("Element is null.");
-                return;
-            }
-
-            Console.WriteLine("Element: " + element.Current.Name);
-
-            string name = "";
-            AutomationElementCollection children;
-            // Find all children of the element
-            if (more)
-            {
-                children = element.FindAll(TreeScope.Descendants, Condition.TrueCondition);
-                name = "Descendant";
-            }
-            else
-            {
-                
-                children = element.FindAll(TreeScope.Children, Condition.TrueCondition);
-                name = "Child";
-            }
-
-            foreach (AutomationElement child in children)
-            {
-                Console.WriteLine(name + " Element: " + child.Current.Name);
-                Console.WriteLine(" - Control Type: " + child.Current.ControlType.ProgrammaticName);
-                Console.WriteLine(" - Automation Id: " + child.Current.AutomationId);
-                Console.WriteLine(" - Class Name: " + child.Current.ClassName);
-            }
-
-            Console.WriteLine("_______________________________");
+            _automationElementsDict = null;
         }
     }
 }
