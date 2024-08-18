@@ -6,7 +6,7 @@ namespace WinVi.Input
     /// <summary>
     /// A class with external functions and constants for the input system
     /// </summary>
-    internal class KeyboardUtilities
+    internal class HookUtilities
     {
         // Windows API functions
         // DLL import for getting keypresses

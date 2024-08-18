@@ -1,30 +1,32 @@
 ﻿using System;
+using System.Windows.Automation;
 using WinVi.UI;
+using WinVi.UI.Tray;
 using WinVi.UiAutomation.Taskbar;
 
-namespace WinVi.Input.Handlers.Hotkeys
+namespace WinVi.Input.Handlers.TaskbarMode
 {
     /// <summary>
     /// A class responsible for TaskbarMode
     /// </summary>
-    internal class TaskbarModeHandler : HotkeyBase
+    internal class TaskbarModeHandler
     {
-        internal TaskbarModeHandler() : base() { }
-
         internal static void Execute()
         {
             try
             {
-                Taskbar.GetTaskbarAppElements();
-                Taskbar.GetTaskbarTrayElements();
+               Taskbar.GetTaskbarAppElements();
+                // TODO: Add interraction with OverlayWindow 
+                                //Taskbar.GetTaskbarTrayElements();
             }
             catch (ArgumentNullException)
             {
                 // Display CRITICAL ERROR MESSAGE
                 Console.WriteLine("CRITICAL ERROR occured while trying to access Windows Taskbar");
+                TrayManager.SetIconStatus(TrayIconStatus.CriticalError);
             }
 
-            OverlayWindow.GetCurrentOverlayInstance().Show(); // some func
+            OverlayWindow.Instance.Show(); // some func
         }
     }
 }

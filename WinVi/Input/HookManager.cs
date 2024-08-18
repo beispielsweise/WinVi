@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using WinVi.Input.Handlers;
-using System.Text.RegularExpressions;
 using WinVi.Input.Handlers.Hotkeys;
+using WinVi.Input.Handlers.TaskbarMode;
 using WinVi.UI.Tray;
 
 namespace WinVi.Input
@@ -15,11 +14,11 @@ namespace WinVi.Input
     /// </summary>
     internal class HookManager : IDisposable 
     {
-        private static HookManager _instance;
+        private static readonly Lazy<HookManager> _instance = new Lazy<HookManager>(() => new HookManager(), true);
         private static readonly object _instanceLock = new object();
 
         private IntPtr _hookID;
-        private readonly KeyboardUtilities.LowLevelKeyboardProc _proc;
+        private readonly HookUtilities.LowLevelKeyboardProc _proc;
 
         // 
         private bool _isInsertModeEnabled= false;
@@ -47,39 +46,15 @@ namespace WinVi.Input
             }
         }
 
-        public static HookManager Instance
-        {
-            get
-            {
-                lock (_instanceLock)
-                {
-                    _instance ??= new HookManager();
-                    return _instance;
-                }
-            }
-        }
+        internal static HookManager Instance => _instance.Value;
 
-        /// <summary>
-        /// Initializes handlers, that need a specific window to operate (changing the window parameters, values etc.)
-        /// Used in a WPF class, that needs to use these handlers
-        /// </summary>
-        /// <param name="window">Window: an instance of a window</param>
-        /*
-        internal void InitializeHotkeyHandlers()
-        {
-            // Initialize Handlers
-            _toggleWindowHandler = new ToggleWindowHandler();
-            _taskbarModeHandler = new TaskbarModeHandler();
-            _forceCloseWindow = new ForceCloseWindow();
-        }
-        */
-        
         /// <summary>
         /// Sets a keyboard hook
         /// </summary>
         private IntPtr SetHook()
         {
-            IntPtr hookID = KeyboardUtilities.SetWindowsHookEx(KeyboardUtilities.WH_KEYBOARD_LL, _proc, KeyboardUtilities.GetModuleHandle(null), 0);
+            IntPtr hookID = HookUtilities.SetWindowsHookEx(HookUtilities.WH_KEYBOARD_LL, _proc, HookUtilities.GetModuleHandle(null), 0);
+
             if (hookID == IntPtr.Zero)
                 throw new ArgumentNullException();
 
@@ -101,7 +76,7 @@ namespace WinVi.Input
                 Marshal.ReadInt32(lParam
                 ));
 
-            if (wParam == (IntPtr)KeyboardUtilities.WM_KEYDOWN || wParam == (IntPtr)KeyboardUtilities.WM_SYSKEYDOWN)
+            if (wParam == (IntPtr)HookUtilities.WM_KEYDOWN || wParam == (IntPtr)HookUtilities.WM_SYSKEYDOWN)
             {
                 CheckHotkeyButtonPressed(vkString, true);
 
@@ -118,15 +93,15 @@ namespace WinVi.Input
                             case "escape":
                                 _isOverlayWindowOpened = false;
                                 ForceCloseWindow.Execute();
-                                TrayManager.SetIconStatus(TrayIconStatus.Normal);
+                                TrayManager.SetIconStatus(TrayIconStatus.Default);
                                 return (IntPtr)1;
                             default:
-                                return KeyboardUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
+                                return HookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
                         }
                     }
                 }
                 // If the hotkey combination is pressed
-                else
+                else if (CheckHotkeyCombinationPressed())
                 {
                     // Logic for exiting the insert mode, ESC key
                     if (_isInsertModeEnabled)
@@ -134,10 +109,11 @@ namespace WinVi.Input
                         if (vkString == "escape")
                         {
                             _isInsertModeEnabled = false;
-                            TrayManager.SetIconStatus(TrayIconStatus.Normal);
+                            TrayManager.SetIconStatus(TrayIconStatus.Default);
+                            return (IntPtr)1;
                         }
 
-                        return (IntPtr)1;
+                        return HookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
                     }
 
                     // Process hotkeys
@@ -148,24 +124,24 @@ namespace WinVi.Input
                             return (IntPtr)1;*/
                         case "t":
                             _isOverlayWindowOpened = true;
-                            TaskbarModeHandler.Execute();
                             TrayManager.SetIconStatus(TrayIconStatus.OverlayOn);
+                            TaskbarModeHandler.Execute();
                             return (IntPtr)1;
                         case "i":
                             _isInsertModeEnabled = true;
                             TrayManager.SetIconStatus(TrayIconStatus.InsertMode);
                             return (IntPtr)1;
                         default:
-                            return KeyboardUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
+                            return HookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
                     }
                 }
             }
-            else if (wParam == (IntPtr)KeyboardUtilities.WM_KEYUP)
+            else if (wParam == (IntPtr)HookUtilities.WM_KEYUP)
             {
                 CheckHotkeyButtonPressed(vkString, false);
             }
 
-            return KeyboardUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
+            return HookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
         /// <summary>
@@ -213,11 +189,14 @@ namespace WinVi.Input
             return _ctrlPressed && _altPressed && _shiftPressed;
         }
 
+        /// <summary>
+        /// Disposes of resources and nullifies the singleton instance
+        /// </summary>
         public void Dispose()
         {
             if (_hookID != IntPtr.Zero)
             {
-                KeyboardUtilities.UnhookWindowsHookEx(_hookID);
+                HookUtilities.UnhookWindowsHookEx(_hookID);
                 _hookID = IntPtr.Zero;
             }
         }

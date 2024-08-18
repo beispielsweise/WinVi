@@ -1,12 +1,12 @@
-﻿using System;
+﻿﻿using System;
 using System.Windows.Forms;
 
 namespace WinVi.UI.Tray
 {
     internal enum TrayIconStatus
     {
-        Normal, 
-        Error,
+        Default, 
+        CriticalError,
         InsertMode,
         OverlayOn
     }
@@ -15,10 +15,9 @@ namespace WinVi.UI.Tray
     /// Tray manager, that is responsible for creating, managing and deleting system tray icon
     /// Uses singleton pattern
     /// </summary>
-    internal class TrayManager :IDisposable
+    internal class TrayManager : IDisposable
     {
-        private static TrayManager _instance;
-        private static readonly object _instanceLock = new object();
+        private static readonly Lazy<TrayManager> _instance = new Lazy<TrayManager>(() => new TrayManager());
 
         // Create tray instance
         private static NotifyIcon _trayIcon;
@@ -27,7 +26,7 @@ namespace WinVi.UI.Tray
         {
             _trayIcon = new NotifyIcon
             {
-                Icon = Properties.Resources.Normal,
+                Icon = Properties.Resources.DefaultIcon,
                 Text = "WinVi",
                 Visible = true,
             };
@@ -41,36 +40,30 @@ namespace WinVi.UI.Tray
 
         }
 
-        public static TrayManager Instance
-        {
-            get
-            {
-                lock (_instanceLock)
-                {
-                    _instance ??= new TrayManager();
-                    return _instance;
-                }
-            }
-        }
+        /// <summary>
+        /// Gets an instance of a TrayManager
+        /// </summary>
+        public static TrayManager Instance => _instance.Value;
+
 
         public static void SetIconStatus(TrayIconStatus status)
         {
             switch (status)
             {
-                case TrayIconStatus.Normal:
-                    _trayIcon.Icon = Properties.Resources.Normal;
+                case TrayIconStatus.Default:
+                    _trayIcon.Icon = Properties.Resources.DefaultIcon;
                     _trayIcon.Text = "WinVi";
                     break;
-                case TrayIconStatus.Error:
-                    _trayIcon.Icon = Properties.Resources.CriticalError;
+                case TrayIconStatus.CriticalError:
+                    _trayIcon.Icon = Properties.Resources.CriticalErrorIcon;
                     _trayIcon.Text = "Critical Error";
                     break;
                 case TrayIconStatus.InsertMode:
-                    _trayIcon.Icon = Properties.Resources.InsertMode;
+                    _trayIcon.Icon = Properties.Resources.InsertModeIcon;
                     _trayIcon.Text = "Insert mode";
                     break;
                 case TrayIconStatus.OverlayOn:
-                    _trayIcon.Icon = Properties.Resources.OverlayOn;
+                    _trayIcon.Icon = Properties.Resources.OverlayOnIcon;
                     _trayIcon.Text = "Overlay is on";
                     break;
                 default:
@@ -80,13 +73,25 @@ namespace WinVi.UI.Tray
 
         public void OnExitTrayManager(object sender, EventArgs e)
         {
-            _trayIcon?.Dispose();
+            Dispose();
             System.Windows.Application.Current.Shutdown();
         }
 
         public void Dispose()
         {
-            _trayIcon = null;    
+            if (_trayIcon != null)
+            {
+                _trayIcon.Dispose();
+                _trayIcon = null;
+            }
+
+            GC.SuppressFinalize(this);
+        }
+
+        // Optional finalizer if needed for cleanup
+        ~TrayManager()
+        {
+            Dispose();
         }
     }
 }

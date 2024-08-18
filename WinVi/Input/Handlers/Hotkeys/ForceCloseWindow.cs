@@ -11,13 +11,11 @@ namespace WinVi.Input.Handlers.Hotkeys
     /// <summary>
     /// Force closes OverlayWindow
     /// </summary>
-    internal class ForceCloseWindow : HotkeyBase
+    internal class ForceCloseWindow
     {
-        internal ForceCloseWindow() : base() { }
-
         internal static void Execute()
         {
-            OverlayWindow.GetCurrentOverlayInstance().CollapseWindow();
+            OverlayWindow.Instance.CollapseWindow();
         }
     }
 }

@@ -63,9 +63,9 @@ namespace WinVi.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon CriticalError {
+        internal static System.Drawing.Icon CriticalErrorIcon {
             get {
-                object obj = ResourceManager.GetObject("CriticalError", resourceCulture);
+                object obj = ResourceManager.GetObject("CriticalErrorIcon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace WinVi.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon InsertMode {
+        internal static System.Drawing.Icon DefaultIcon {
             get {
-                object obj = ResourceManager.GetObject("InsertMode", resourceCulture);
+                object obj = ResourceManager.GetObject("DefaultIcon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace WinVi.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon Normal {
+        internal static System.Drawing.Icon InsertModeIcon {
             get {
-                object obj = ResourceManager.GetObject("Normal", resourceCulture);
+                object obj = ResourceManager.GetObject("InsertModeIcon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace WinVi.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon OverlayOn {
+        internal static System.Drawing.Icon OverlayOnIcon {
             get {
-                object obj = ResourceManager.GetObject("OverlayOn", resourceCulture);
+                object obj = ResourceManager.GetObject("OverlayOnIcon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

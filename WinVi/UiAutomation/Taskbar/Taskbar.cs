@@ -1,6 +1,4 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
 using System.Windows.Automation;
 
 namespace WinVi.UiAutomation.Taskbar
@@ -9,11 +7,15 @@ namespace WinVi.UiAutomation.Taskbar
     /// A class, that is responsible for finding and interracting with elements in Taskbar (Taskbar and Tray)
     /// </summary>
     /// TODO: Add throwing exeptions everywhere, checks for Null
-    internal class Taskbar
+    internal class Taskbar : IDisposable
     {
         // Variables with properties, that help indicate different UI Elements, placed from top to bottom
         // _cn - ClassName
         // _aid - AutomationID 
+
+
+        // TODO: Re-wirte using a Singleton pattern, adding a global array of automation elements available (maybe add an abstract class or interface in the future)
+
 
         // Global taskbar
         private static readonly string _cnGlobalTaskbarName = "Shell_TrayWnd";
@@ -28,20 +30,19 @@ namespace WinVi.UiAutomation.Taskbar
         private static readonly string _aidSystemTrayIcon = "SystemTrayIcon";
         private static readonly string _aidNotifyItemIcon = "NotifyItemIcon";
 
-        private static AutomationElement GetTaskbar()
+
+        private static AutomationElement GetGlobalTaskbar()
         {
             AutomationElement taskbar = AutomationElement
                 .RootElement
                 .FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnGlobalTaskbarName));
             taskbar = taskbar.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.ClassNameProperty, _cnAllTaskbarElements));
-
             return taskbar;
         }
 
-
-        internal static void GetTaskbarAppElements()
+        internal static AutomationElement[] GetTaskbarAppElements()
         {
-            AutomationElement taskbar = GetTaskbar()
+            AutomationElement taskbar = GetGlobalTaskbar()
                 ?? throw new ArgumentNullException(nameof(taskbar));
             
             taskbar = taskbar
@@ -52,21 +53,16 @@ namespace WinVi.UiAutomation.Taskbar
             AutomationElementCollection taskbarSystemApps = taskbar
                 .FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarSystemApps))
                 ?? throw new ArgumentNullException(nameof(taskbar));
-            foreach (AutomationElement app in taskbarSystemApps)
-            {
-                Console.WriteLine(app.Current.Name + "\n" +  
-                    app.Current.BoundingRectangle.ToString());
-            }
-
             AutomationElementCollection taskbarUserApps = taskbar
                 .FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarUserApps))
                 ?? throw new ArgumentNullException(nameof(taskbar));
-            foreach (AutomationElement app in taskbarUserApps)
-            {
-                Console.WriteLine(app.Current.Name + "\n" +  
-                    app.Current.BoundingRectangle.ToString());
-            }
 
+            AutomationElement[] appElementsArray = new AutomationElement[taskbarSystemApps.Count + taskbarUserApps.Count];
+
+            taskbarSystemApps.CopyTo(appElementsArray, 0);
+            taskbarUserApps.CopyTo(appElementsArray, taskbarSystemApps.Count);
+
+            return appElementsArray;
         }
 
         internal static void GetTaskbarTrayElements()
@@ -74,16 +70,15 @@ namespace WinVi.UiAutomation.Taskbar
             //
         }
 
-        public static void ClickTaskbarAppElement()
+        public static void Invokelement(AutomationElement el)
+        {
+            
+        }
+
+        public void Dispose()
         {
 
         }
-
-        public static void ClickTaskbarTrayElement()
-        {
-
-        }
-
 
         /* DEBUG FUNCTION, DELETE!!! */
         private static void LogSubelements(AutomationElement element, bool more)

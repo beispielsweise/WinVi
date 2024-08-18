@@ -118,16 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="CriticalError" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\CriticalError.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="CriticalErrorIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CriticalErrorIcon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="InsertMode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\InsertMode.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="DefaultIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DefaultIcon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Normal" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Normal.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="InsertModeIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\InsertModeIcon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="OverlayOn" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\OverlayOn.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="OverlayOnIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\OverlayOnIcon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using System.Windows.Media;
+using WinVi.Input;
 
 namespace WinVi.UI
 {
@@ -9,7 +9,6 @@ namespace WinVi.UI
     /// </summary>
     partial class OverlayWindow : Window
     {
-        private static readonly App _app = (App)Application.Current;
         private static OverlayWindow _instance;
 
         public OverlayWindow()
@@ -19,12 +18,13 @@ namespace WinVi.UI
             ModifyWindow();
         }
 
-        internal static OverlayWindow GetCurrentOverlayInstance()
+        internal static OverlayWindow Instance
         {
-            if (_instance == null)
-                _instance = new OverlayWindow();
-            
-            return _instance;
+            get
+            {
+                _instance ??= new OverlayWindow();
+                return _instance;
+            }
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace WinVi.UI
             // This is what makes the window transparent and unclickable 
             this.WindowStyle = WindowStyle.None;
             this.AllowsTransparency = true;
-            this.Background = Brushes.Transparent;
+            this.Background = System.Windows.Media.Brushes.Transparent;
 
             // Invisible by default, always on top
             this.Visibility = Visibility.Hidden;

@@ -39,7 +39,8 @@
     <StartupObject>WinVi.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\Normal.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -66,9 +67,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Input\Handlers\Hotkeys\TaskbarModeHandler.cs" />
+    <Compile Include="Input\Handlers\TaskbarMode\TaskbarModeHandler.cs" />
     <Compile Include="Input\Handlers\Hotkeys\ForceCloseWindow.cs" />
-    <Compile Include="Input\Handlers\Hotkeys\HotkeyBase.cs" />
     <Compile Include="Input\HookManager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -85,7 +85,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Input\KeyboardUtilities.cs" />
+    <Compile Include="Input\HookUtilities.cs" />
     <Compile Include="UI\OvelayWindow.xaml.cs">
       <DependentUpon>OvelayWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -113,16 +113,16 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\CriticalError.ico" />
+    <None Include="Resources\CriticalErrorIcon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\InsertMode.ico" />
+    <None Include="Resources\DefaultIcon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Normal.ico" />
+    <None Include="Resources\InsertModeIcon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\OverlayOn.ico" />
+    <None Include="Resources\OverlayOnIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
