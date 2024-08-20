@@ -11,10 +11,11 @@ namespace WinVi.UiAutomation.Utilities
     internal class UIKeysGenerator
     {
         private static readonly Lazy<UIKeysGenerator> _instance = new Lazy<UIKeysGenerator>(() => new UIKeysGenerator(), true);
-        private readonly string _commonCharactersString = "ASDFGHJKL";
-        private readonly string _extendedCharactersString = "ZXCVBNMQWERTYUIOP";
 
-        private string[] _keys;
+
+        private static readonly string _commonCharactersString = "ASDFGHJKL";
+        private static readonly string _extendedCharactersString = "ZXCVBNMQWERTYUIOP";
+        private readonly string[] _keys;
         private int _index;
       
         internal static UIKeysGenerator Instance => _instance.Value;

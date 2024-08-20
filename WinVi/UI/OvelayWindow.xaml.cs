@@ -45,6 +45,8 @@ namespace WinVi.UI
 
             // This is what makes the window transparent and unclickable 
             this.WindowStyle = WindowStyle.None;
+            this.WindowState = WindowState.Maximized;
+            this.ResizeMode = ResizeMode.NoResize;
             this.AllowsTransparency = true;
             this.Background = System.Windows.Media.Brushes.Transparent;
 
@@ -73,39 +75,38 @@ namespace WinVi.UI
             this.Show(); 
         }
 
-        internal void DrawTaskbarHintCanvas()
+        internal void DrawHintCanvas(IReadOnlyDictionary<string, AutomationElement> dict)
         {
-            foreach (KeyValuePair<string, AutomationElement> kvp in Taskbar.Instance.AutomationElementsDict)
-            {
+            foreach (KeyValuePair<string, AutomationElement> kvp in dict)
                 CreateTextBlock(kvp.Key, kvp.Value.Current.BoundingRectangle);
-                Console.WriteLine("HERE");
-            }
         }
 
         private void CreateTextBlock(string text, System.Windows.Rect rect)
         {
-            Border border = new Border
-            {
-                Background = Background = new SolidColorBrush(Color.FromArgb(128, 255, 255, 0)), // Half-transparent yellow
-                BorderBrush = Brushes.Black,
-                BorderThickness = new Thickness(2),
-                CornerRadius = new CornerRadius(5),
-                Padding = new Thickness(2),
-            };
-            
             TextBlock textBlock = new TextBlock
             {
                 Text = text,
-                FontSize = 16,
-                Foreground = Brushes.Black,
-                Margin = new Thickness(10),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = 12,                      // Changable
+                FontWeight = FontWeights.Bold,      // Changable
+                Foreground = Brushes.Black,         // Changable
+                // Margin = new Thickness(),        Changable property, how much distance between border and text
+                HorizontalAlignment = HorizontalAlignment.Left,     
+                VerticalAlignment = VerticalAlignment.Top,
             };
-            border.Child = textBlock;
+
+            Border border = new Border
+            {
+                Width = textBlock.Width,
+                Background = new SolidColorBrush(Color.FromArgb(80, 255, 255, 0)),  // Yellow background with opacity, changable 
+                BorderBrush = Brushes.Black,                                        // Changable
+                BorderThickness = new Thickness(2),                                 // Changable
+                CornerRadius = new CornerRadius(5),                                 // Changable
+                Padding = new Thickness(2),                                         // Changable
+                Child = textBlock
+            };
 
             Canvas.SetLeft(border, rect.X);
-            Canvas.SetTop(border, rect.Y + (rect.Height / 2));
+            Canvas.SetTop(border, rect.Y);
 
             HintCanvas.Children.Add(border);
         }

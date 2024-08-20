@@ -29,6 +29,8 @@ namespace WinVi.Input
         private bool _altPressed = false;
         private bool _shiftPressed = false;
         private static string vkString = "";
+
+
         
         /// <summary>
         /// Initialize keyboard hook and handlers 
@@ -92,12 +94,12 @@ namespace WinVi.Input
                         switch (vkString)
                         {
                             case "escape":
-                                _isOverlayWindowOpened = false;
-                                ForceCloseWindow.Execute();
-                                TrayManager.SetIconStatus(TrayIconStatus.Default);
+                                CloseOverlayWindow();
                                 return (IntPtr)1;
                             default:
-                                return HookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
+                                TaskbarModeHandler.TryInvokeHint(vkString);
+
+                                return HookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);                // Add unsafe option, return (IntPtr)1 - disable all keys
                         }
                     }
                 }
@@ -109,8 +111,7 @@ namespace WinVi.Input
                     {
                         if (vkString == "escape")
                         {
-                            _isInsertModeEnabled = false;
-                            TrayManager.SetIconStatus(TrayIconStatus.Default);
+                            ExitInsertMode();
                             return (IntPtr)1;
                         }
 
@@ -124,13 +125,10 @@ namespace WinVi.Input
                             _toggleWindowHandler.Execute();
                             return (IntPtr)1;*/
                         case "t":
-                            _isOverlayWindowOpened = true;
-                            TrayManager.SetIconStatus(TrayIconStatus.OverlayOn);
-                            TaskbarModeHandler.Execute();
+                            HandleTaskbarMode();
                             return (IntPtr)1;
                         case "i":
-                            _isInsertModeEnabled = true;
-                            TrayManager.SetIconStatus(TrayIconStatus.InsertMode);
+                            EnterInsertMode();
                             return (IntPtr)1;
                         default:
                             return HookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
@@ -141,6 +139,33 @@ namespace WinVi.Input
                 CheckHotkeyButtonPressed(vkString, false);
 
             return HookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
+        }
+
+        private void EnterInsertMode()
+        {
+            _isInsertModeEnabled = true;
+            TrayManager.SetIconStatus(TrayIconStatus.InsertMode);
+        }
+
+        private void HandleTaskbarMode()
+        {
+            if (TaskbarModeHandler.Execute() == true)
+            {
+                _isOverlayWindowOpened = true;
+                TrayManager.SetIconStatus(TrayIconStatus.OverlayOn);
+            }
+        }
+        private void ExitInsertMode()
+        {
+            _isInsertModeEnabled = false;
+            TrayManager.SetIconStatus(TrayIconStatus.Default);
+        }
+
+        private void CloseOverlayWindow()
+        {
+            _isOverlayWindowOpened = false;
+            ForceCloseWindow.Execute();
+            TrayManager.SetIconStatus(TrayIconStatus.Default);
         }
 
         /// <summary>

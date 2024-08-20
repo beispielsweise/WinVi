@@ -14,7 +14,6 @@ namespace WinVi
     {
         private HookManager _hookManager;
         private TrayManager _trayManager;
-        private UIKeysGenerator _uiKeysGenerator;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -33,7 +32,7 @@ namespace WinVi
                 _hookManager = null; 
             }
 
-            _uiKeysGenerator = UIKeysGenerator.Instance;
+            UIKeysGenerator _uiKeysGenerator = UIKeysGenerator.Instance;
 
             // Force initialize the Overlay window Instance and force Collapse it
             // Prevents a bug, where the Overlay window opens only on 2nd hotkey press.
@@ -47,8 +46,5 @@ namespace WinVi
             _hookManager?.Dispose();
             base.OnExit(e);
         }
-
-        internal HookManager GetHookManagerInstance() => _hookManager;
-        internal TrayManager GetTrayManagerInstance() => _trayManager;
     }
 }

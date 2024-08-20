@@ -69,6 +69,30 @@ namespace WinVi.UI.Tray
                     throw new ArgumentOutOfRangeException(nameof(status), status, null);
             }
         }
+        public static void SetIconStatus(TrayIconStatus status, string text)
+        {
+            switch (status)
+            {
+                case TrayIconStatus.Default:
+                    _trayIcon.Icon = Properties.Resources.DefaultIcon;
+                    _trayIcon.Text = text;
+                    break;
+                case TrayIconStatus.CriticalError:
+                    _trayIcon.Icon = Properties.Resources.CriticalErrorIcon;
+                    _trayIcon.Text = text;
+                    break;
+                case TrayIconStatus.InsertMode:
+                    _trayIcon.Icon = Properties.Resources.InsertModeIcon;
+                    _trayIcon.Text = text;
+                    break;
+                case TrayIconStatus.OverlayOn:
+                    _trayIcon.Icon = Properties.Resources.OverlayOnIcon;
+                    _trayIcon.Text = text;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(status), status, null);
+            }
+        }
 
         public void OnExitTrayManager(object sender, EventArgs e)
         {

@@ -46,7 +46,7 @@ namespace WinVi.UiAutomation.Taskbar
             return taskbar;
         }
 
-        internal void GetTaskbarAppElements()
+        internal void FillTaskbarElementsDict()
         {
             _automationElementsDict ??= new Dictionary<string, AutomationElement>();   
 
@@ -68,11 +68,6 @@ namespace WinVi.UiAutomation.Taskbar
                 ?? throw new ArgumentNullException(nameof(taskbar));
             foreach (AutomationElement element in taskbarUserApps)
                 _automationElementsDict.Add(UIKeysGenerator.Instance.GetNextKey(), element);
-        }
-
-        internal void GetTaskbarTrayElements()
-        {
-            //
         }
 
         public void InvokeDictElement(string key)

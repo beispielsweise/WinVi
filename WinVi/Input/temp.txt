@@ -1,0 +1,35 @@
+﻿
+        private static string _currentSequence = string.Empty;
+
+
+        public static bool OnKeyPressed(Key key, int lengthLimit)
+        {
+            // Append the key to the current sequence
+            _currentSequence += keyString;
+
+            // Check if the current sequence matches any keys in the dictionary
+            if (_automationElementsDict.ContainsKey(_currentSequence))
+            {
+                // A corresponding action needs to be triggered 
+                return true;
+                
+                // Reset the sequence after the action is executed
+                _currentSequence = string.Empty;
+            }
+            else if (lengthLimit > 2)
+            {
+                // If the sequence is invalid, reset it
+                _currentSequence = string.Empty;
+                return false
+            }
+        }
+
+
+        class 
+            {
+            internal IReadonlyDictionary<int32, string> _keyboardKeys =new Dictionary<int, string>
+            {
+            { 0x1B, "Escape" }, // VK_ESCAPE
+            { 0x20, "Space" }, // VK_SPACE
+            };
+            }

@@ -11,21 +11,28 @@ namespace WinVi.Input.Handlers.TaskbarMode
     /// </summary>
     internal class TaskbarModeHandler
     {
-        internal static void Execute()
+        internal static bool Execute()
         {
             try
             {
-                Taskbar.Instance.GetTaskbarAppElements();
+                Taskbar.Instance.FillTaskbarElementsDict();
             }
             catch (ArgumentNullException)
             {
                 // Display CRITICAL ERROR MESSAGE
-                Console.WriteLine("CRITICAL ERROR occured while trying to access Windows Taskbar");
-                TrayManager.SetIconStatus(TrayIconStatus.CriticalError);
+                TrayManager.SetIconStatus(TrayIconStatus.CriticalError, "Cannot find taskbar elements. Taskbar hidden?");
+                return false;
             }
 
-            OverlayWindow.Instance.DrawTaskbarHintCanvas();
+            OverlayWindow.Instance.DrawHintCanvas(Taskbar.Instance.AutomationElementsDict);
             OverlayWindow.Instance.Show();
+            return true;
+        }
+
+        internal static bool TryInvokeHint(string vkString)
+        {
+
+            return false;
         }
     }
 }
