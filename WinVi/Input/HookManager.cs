@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using WinVi.Input.Handlers.Hotkeys;
 using WinVi.Input.Handlers.TaskbarMode;
+using WinVi.Input.Utilities;
 using WinVi.UI.Tray;
 
 namespace WinVi.Input
@@ -27,6 +28,7 @@ namespace WinVi.Input
         private bool _ctrlPressed = false;
         private bool _altPressed = false;
         private bool _shiftPressed = false;
+        private static string vkString = "";
         
         /// <summary>
         /// Initialize keyboard hook and handlers 
@@ -71,7 +73,7 @@ namespace WinVi.Input
         /// </returns>
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            string vkString = ConvertKeyCodeToString(
+            vkString = ConvertKeyCodeToString(
                 Marshal.ReadInt32(lParam
                 ));
 
@@ -136,9 +138,7 @@ namespace WinVi.Input
                 }
             }
             else if (wParam == (IntPtr)HookUtilities.WM_KEYUP)
-            {
                 CheckHotkeyButtonPressed(vkString, false);
-            }
 
             return HookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
         }

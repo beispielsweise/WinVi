@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using WinVi.UI;
+using WinVi.UiAutomation.Taskbar;
 
 namespace WinVi.Input.Handlers.Hotkeys
 {
@@ -15,7 +16,10 @@ namespace WinVi.Input.Handlers.Hotkeys
     {
         internal static void Execute()
         {
+            OverlayWindow.Instance.ClearHintCanvas();
             OverlayWindow.Instance.HideWindow();
+
+            Taskbar.Instance.Dispose();
         }
     }
 }

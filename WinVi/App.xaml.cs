@@ -3,6 +3,7 @@ using System.Windows;
 using WinVi.Input;
 using WinVi.UI;
 using WinVi.UI.Tray;
+using WinVi.UiAutomation.Utilities;
 
 namespace WinVi
 {
@@ -13,6 +14,7 @@ namespace WinVi
     {
         private HookManager _hookManager;
         private TrayManager _trayManager;
+        private UIKeysGenerator _uiKeysGenerator;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -31,9 +33,12 @@ namespace WinVi
                 _hookManager = null; 
             }
 
+            _uiKeysGenerator = UIKeysGenerator.Instance;
+
             // Force initialize the Overlay window Instance and force Collapse it
             // Prevents a bug, where the Overlay window opens only on 2nd hotkey press.
-            // OverlayWindow.Instance.HideWindow();
+            // ! ONLY A TEMPORARY SOLUTION, THIS DECREASES PERFORMANCE!
+            OverlayWindow.Instance.HideWindow();
         }
 
         protected override void OnExit(ExitEventArgs e)

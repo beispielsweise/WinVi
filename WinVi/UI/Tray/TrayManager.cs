@@ -45,7 +45,6 @@ namespace WinVi.UI.Tray
         /// </summary>
         public static TrayManager Instance => _instance.Value;
 
-
         public static void SetIconStatus(TrayIconStatus status)
         {
             switch (status)

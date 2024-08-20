@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace WinVi.Input
+namespace WinVi.Input.Utilities
 {
     /// <summary>
     /// A class with external functions and constants for the input system

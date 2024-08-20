@@ -78,6 +78,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="UiAutomation\Taskbar\Taskbar.cs" />
+    <Compile Include="UiAutomation\Utilities\UIKeysGenerator.cs" />
     <Compile Include="UI\Tray\TrayManager.cs" />
     <Page Include="UI\OvelayWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -87,7 +88,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Input\HookUtilities.cs" />
+    <Compile Include="Input\Utilities\HookUtilities.cs" />
     <Compile Include="UI\OvelayWindow.xaml.cs">
       <DependentUpon>OvelayWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
