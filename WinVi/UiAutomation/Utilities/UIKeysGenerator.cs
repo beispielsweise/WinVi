@@ -12,7 +12,6 @@ namespace WinVi.UiAutomation.Utilities
     {
         private static readonly Lazy<UIKeysGenerator> _instance = new Lazy<UIKeysGenerator>(() => new UIKeysGenerator(), true);
 
-
         private static readonly string _commonCharactersString = "ASDFGHJKL";
         private static readonly string _extendedCharactersString = "ZXCVBNMQWERTYUIOP";
         private readonly string[] _keys;
@@ -25,38 +24,21 @@ namespace WinVi.UiAutomation.Utilities
             char[] charCommonKeys = _commonCharactersString.ToCharArray();
             char[] charExtendedKeys = _extendedCharactersString.ToCharArray();
 
-            // Number of single-letter keys + two-letter combinations
-            int singleCommonKeys = charCommonKeys.Length;  // A, S, D, F, etc.
-            int singleExtendedKeys = charExtendedKeys.Length;  // Z, X, C, V, etc.
-
-            int twoCommonKeys = charCommonKeys.Length * charCommonKeys.Length;  // AA, AS, AD, etc.
-            int twoExtendedKeys = charExtendedKeys.Length * charExtendedKeys.Length;  // ZZ, ZX, ZC, etc.
-
-            _keys = new string[singleCommonKeys + singleExtendedKeys + twoCommonKeys + twoExtendedKeys];
+            _keys = new string[charCommonKeys.Length * charCommonKeys.Length + charExtendedKeys.Length * charExtendedKeys.Length];
 
             // Adding common keys
-            int index = 0;
-            foreach (char firstC in charCommonKeys)
-            {
-                _keys[index++] = $"{firstC}";
-            }
+            _index = 0;
 
             foreach (char firstC in charCommonKeys)
             {
                 foreach (char secondC in charCommonKeys)
-                    _keys[index++] = $"{firstC}{secondC}";
-            }
-
-            // Adding additional keys, for when 256 isnt enough
-            foreach (char firstC in charExtendedKeys)
-            {
-                _keys[index++] = $"{firstC}";
+                    _keys[_index++] = $"{firstC}{secondC}";
             }
 
             foreach (char firstC in charExtendedKeys)
             {
                 foreach (char secondC in charExtendedKeys)
-                    _keys[index++] = $"{firstC}{secondC}";
+                    _keys[_index++] = $"{firstC}{secondC}";
             }
             _index = 0;
         }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using WinVi.Input.Handlers.Hotkeys;
 using WinVi.Input.Handlers.TaskbarMode;
 using WinVi.Input.Utilities;
@@ -18,7 +17,7 @@ namespace WinVi.Input
         private static readonly Lazy<HookManager> _instance = new Lazy<HookManager>(() => new HookManager(), true);
 
         private IntPtr _hookID;
-        private readonly HookUtilities.LowLevelKeyboardProc _proc;
+        private readonly KeyboardHookUtilities.LowLevelKeyboardProc _proc;
 
         // 
         private bool _isInsertModeEnabled= false;
@@ -30,8 +29,6 @@ namespace WinVi.Input
         private bool _shiftPressed = false;
         private static string vkString = "";
 
-
-        
         /// <summary>
         /// Initialize keyboard hook and handlers 
         /// </summary>
@@ -56,8 +53,7 @@ namespace WinVi.Input
         /// </summary>
         private IntPtr SetHook()
         {
-            IntPtr hookID = HookUtilities.SetWindowsHookEx(HookUtilities.WH_KEYBOARD_LL, _proc, HookUtilities.GetModuleHandle(null), 0);
-
+            IntPtr hookID = KeyboardHookUtilities.SetWindowsHookEx((int)KeyboardHookUtilities.KeyboardHooks.WH_KEYBOARD_LL, _proc, KeyboardHookUtilities.GetModuleHandle(null), 0);
             if (hookID == IntPtr.Zero)
                 throw new ArgumentNullException();
 
@@ -75,11 +71,9 @@ namespace WinVi.Input
         /// </returns>
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            vkString = ConvertKeyCodeToString(
-                Marshal.ReadInt32(lParam
-                ));
+            vkString = KeyboardHookUtilities._vkKeyCodes.TryGetValue(Marshal.ReadInt32(lParam), out string keyString) ? keyString : "null";
 
-            if (wParam == (IntPtr)HookUtilities.WM_KEYDOWN || wParam == (IntPtr)HookUtilities.WM_SYSKEYDOWN)
+            if (wParam == (IntPtr)KeyboardHookUtilities.KeyboardEventTypes.KeyDown || wParam == (IntPtr)KeyboardHookUtilities.KeyboardEventTypes.SyskeyDown)
             {
                 CheckHotkeyButtonPressed(vkString, true);
 
@@ -97,9 +91,9 @@ namespace WinVi.Input
                                 CloseOverlayWindow();
                                 return (IntPtr)1;
                             default:
-                                TaskbarModeHandler.TryInvokeHint(vkString);
+                                TaskbarModeHandler.ProcessHintKey(vkString);
 
-                                return HookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);                // Add unsafe option, return (IntPtr)1 - disable all keys
+                                return KeyboardHookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);                
                         }
                     }
                 }
@@ -115,7 +109,7 @@ namespace WinVi.Input
                             return (IntPtr)1;
                         }
 
-                        return HookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
+                        return KeyboardHookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
                     }
 
                     // Process hotkeys
@@ -131,14 +125,14 @@ namespace WinVi.Input
                             EnterInsertMode();
                             return (IntPtr)1;
                         default:
-                            return HookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
+                            return KeyboardHookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
                     }
                 }
             }
-            else if (wParam == (IntPtr)HookUtilities.WM_KEYUP)
+            else if (wParam == (IntPtr)KeyboardHookUtilities.KeyboardEventTypes.KeyUp)
                 CheckHotkeyButtonPressed(vkString, false);
 
-            return HookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
+            return KeyboardHookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
         private void EnterInsertMode()
@@ -169,18 +163,6 @@ namespace WinVi.Input
         }
 
         /// <summary>
-        /// Converts vkCode into its string value
-        /// </summary>
-        /// <param name="vkCode">initial integer code value</param>
-        /// <returns>string: corresponding string value</returns>
-        internal static string ConvertKeyCodeToString(int vkCode)
-        {
-            return ((Keys)vkCode).
-                ToString().
-                ToLower();
-        }
-
-        /// <summary>
         /// Checks if buttons CTRL SHIFT and ALT are pressed at the same time. 
         /// This is a standart shortcut modifyer which is NOT intended to be changed.
         /// </summary>
@@ -191,16 +173,13 @@ namespace WinVi.Input
             // Hotkey mechanism logic
             switch (vkString)
             {
-                case "rshiftkey":
-                case "lshiftkey":
+                case "shift":
                     _shiftPressed = isKeyDown;
                     break;
-                case "rcontrolkey":
-                case "lcontrolkey":
+                case "ctrl":
                     _ctrlPressed = isKeyDown;
                     break;
-                case "rmenu":
-                case "lmenu":
+                case "alt":
                     _altPressed = isKeyDown;
                     break;
                 default:
@@ -220,7 +199,7 @@ namespace WinVi.Input
         {
             if (_hookID != IntPtr.Zero)
             {
-                HookUtilities.UnhookWindowsHookEx(_hookID);
+                KeyboardHookUtilities.UnhookWindowsHookEx(_hookID);
                 _hookID = IntPtr.Zero;
             }
         }

@@ -33,6 +33,7 @@ namespace WinVi
             }
 
             UIKeysGenerator _uiKeysGenerator = UIKeysGenerator.Instance;
+            ClickManager _clickManager = ClickManager.Instance;
 
             // Force initialize the Overlay window Instance and force Collapse it
             // Prevents a bug, where the Overlay window opens only on 2nd hotkey press.

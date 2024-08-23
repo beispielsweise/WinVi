@@ -70,9 +70,20 @@ namespace WinVi.UiAutomation.Taskbar
                 _automationElementsDict.Add(UIKeysGenerator.Instance.GetNextKey(), element);
         }
 
+        internal void GetContextMenu()
+        {
+            AutomationElement ae= null;
+            _automationElementsDict.Add("1+ELEMENT_IDENTIFICATOR", ae);
+
+            // TODO: Implement the following idea:
+            // For the main taskbar elements, we implement a key like 1AA, 1AS, 1AF and so on. So, 1 will be an identifier of the main layer.
+            // HOWEVER, if we open a context menu, we do 2KK, 2KL or such. Then, if there is another layer, we add 3 and so on. This is a good idea in terms of memory-efficiency
+        }
+
         public void InvokeDictElement(string key)
         {
             // Console.WriteLine(_automationElementsDict[key].Current.Name);
+            
         }
 
         public void Dispose()

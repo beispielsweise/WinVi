@@ -69,9 +69,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Input\Managers\ClickManager.cs" />
     <Compile Include="Input\Handlers\TaskbarMode\TaskbarModeHandler.cs" />
     <Compile Include="Input\Handlers\Hotkeys\ForceCloseWindow.cs" />
-    <Compile Include="Input\HookManager.cs" />
+    <Compile Include="Input\Managers\HookManager.cs" />
+    <Compile Include="Input\Utilities\MouseClickUtilities.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -88,7 +90,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Input\Utilities\HookUtilities.cs" />
+    <Compile Include="Input\Utilities\KeyboardHookUtilities.cs" />
     <Compile Include="UI\OvelayWindow.xaml.cs">
       <DependentUpon>OvelayWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
