@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Forms;
 using WinVi.Input.Utilities;
 
@@ -15,11 +9,11 @@ namespace WinVi.Input
     internal class ClickManager
     {
         private static readonly Lazy<ClickManager> _instance = new Lazy<ClickManager> (() => new ClickManager(), true);
-        Screen screen = null;
+        private static Screen _screen = null;
 
         private ClickManager ()
         {
-            screen = Screen.PrimaryScreen;
+            _screen = Screen.PrimaryScreen;
         }
 
         internal static ClickManager Instance = _instance.Value;
@@ -28,12 +22,12 @@ namespace WinVi.Input
         /// Emulates a mouse button click at a specific position. isRightClick determines if a left click action should be pressed, or the right one
         /// </summary>
         /// <param name="element"></param>
-        /// <param name="isRightClick"></param>
-        public void Click(AutomationElement element, bool isRightClick)
+        /// <param name="rightClick"></param>
+        public void Click(Rect rect, bool rightClick)
         {
             // Calculate the absolute coordinates
-            // int absoluteX = Convert.ToInt32((p.X - primaryScreen.Bounds.Left) * 65536 / primaryScreen.Bounds.Width);
-            // int absoluteY = Convert.ToInt32((p.Y - primaryScreen.Bounds.Top) * 65536 / primaryScreen.Bounds.Height);
+            int absoluteX = Convert.ToInt32((rect.X - _screen.Bounds.Left) * 65536 / _screen.Bounds.Width);
+            int absoluteY = Convert.ToInt32((rect.Y - _screen.Bounds.Top) * 65536 / _screen.Bounds.Height);
 
             // Create a list to hold the input events
             var inputs = new MouseClickUtilities.Input[2];
@@ -44,11 +38,11 @@ namespace WinVi.Input
                 type = MouseClickUtilities.SendInputEventType.Mouse,
                 mouseInput = new MouseClickUtilities.MouseInput
                 {
-                    //dx = absoluteX,
-                    //dy = absoluteY,
+                    dx = absoluteX,
+                    dy = absoluteY,
                     mouseData = 0,
                     dwFlags = MouseClickUtilities.MouseEventFlags.Absolute | 
-                              (isRightClick ? MouseClickUtilities.MouseEventFlags.RightDown : MouseClickUtilities.MouseEventFlags.LeftDown),
+                              (rightClick ? MouseClickUtilities.MouseEventFlags.RightDown : MouseClickUtilities.MouseEventFlags.LeftDown),
                     time = 0,
                     dwExtraInfo = IntPtr.Zero,
                 },
@@ -60,11 +54,11 @@ namespace WinVi.Input
                 type = MouseClickUtilities.SendInputEventType.Mouse,
                 mouseInput = new MouseClickUtilities.MouseInput
                 {
-                    //dx = absoluteX,
-                    //dy = absoluteY,
+                    dx = absoluteX,
+                    dy = absoluteY,
                     mouseData = 0,
                     dwFlags = MouseClickUtilities.MouseEventFlags.Absolute | 
-                              (isRightClick ? MouseClickUtilities.MouseEventFlags.RightUp : MouseClickUtilities.MouseEventFlags.LeftUp),
+                              (rightClick ? MouseClickUtilities.MouseEventFlags.RightUp : MouseClickUtilities.MouseEventFlags.LeftUp),
                     time = 0,
                     dwExtraInfo = IntPtr.Zero,
                 },

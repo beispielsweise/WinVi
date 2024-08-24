@@ -1,7 +1,10 @@
 ﻿using System;
-using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace WinVi.UiAutomation.Utilities
+namespace WinVi.UI.Misc
 {
     /// <summary>
     /// A class that generates key for a dictionary of UI Automation elements to be displayed on the screen.
@@ -16,9 +19,9 @@ namespace WinVi.UiAutomation.Utilities
         private static readonly string _extendedCharactersString = "ZXCVBNMQWERTYUIOP";
         private readonly string[] _keys;
         private int _index;
-      
+
         internal static UIKeysGenerator Instance => _instance.Value;
-        
+
         private UIKeysGenerator()
         {
             char[] charCommonKeys = _commonCharactersString.ToCharArray();

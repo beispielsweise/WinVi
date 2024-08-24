@@ -1,9 +1,8 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using WinVi.Input;
 using WinVi.UI;
+using WinVi.UI.Misc;
 using WinVi.UI.Tray;
-using WinVi.UiAutomation.Utilities;
 
 namespace WinVi
 {
@@ -12,39 +11,29 @@ namespace WinVi
     /// </summary>
     public partial class App : System.Windows.Application
     {
-        private HookManager _hookManager;
-        private TrayManager _trayManager;
-
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
-
-            _trayManager = TrayManager.Instance;
-
+            _ = TrayManager.Instance;
             try
             {
-                _hookManager = HookManager.Instance; 
+                _= HookManager.Instance; 
             }
             catch 
             {
                 TrayManager.SetIconStatus(TrayIconStatus.CriticalError); 
-                _hookManager = null; 
             }
-
-            UIKeysGenerator _uiKeysGenerator = UIKeysGenerator.Instance;
-            ClickManager _clickManager = ClickManager.Instance;
-
-            // Force initialize the Overlay window Instance and force Collapse it
-            // Prevents a bug, where the Overlay window opens only on 2nd hotkey press.
-            // ! ONLY A TEMPORARY SOLUTION, THIS DECREASES PERFORMANCE!
+            _ = UIKeysGenerator.Instance;
+            _ = ClickManager.Instance;
+            // Force initialize the Overlay window Instance
             OverlayWindow.Instance.HideWindow();
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
-            _trayManager?.Dispose();
-            _hookManager?.Dispose();
+            TrayManager.Instance.Dispose();
+            HookManager.Instance.Dispose();
             base.OnExit(e);
         }
     }

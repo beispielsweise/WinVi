@@ -91,7 +91,7 @@ namespace WinVi.Input
                                 CloseOverlayWindow();
                                 return (IntPtr)1;
                             default:
-                                TaskbarModeHandler.ProcessHintKey(vkString);
+                                // TaskbarModeHandler.ProcessHintKey(vkString);
 
                                 return KeyboardHookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);                
                         }

@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading;
+﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
-using WinVi.Input;
-using WinVi.UiAutomation.Taskbar;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace WinVi.UI
 {
@@ -75,13 +68,13 @@ namespace WinVi.UI
             this.Show(); 
         }
 
-        internal void DrawHintCanvas(IReadOnlyDictionary<string, AutomationElement> dict)
+        internal void DrawHintCanvas(IReadOnlyDictionary<string, Rect> dict)
         {
-            foreach (KeyValuePair<string, AutomationElement> kvp in dict)
-                CreateTextBlock(kvp.Key, kvp.Value.Current.BoundingRectangle);
+            foreach (KeyValuePair<string, Rect> kvp in dict)
+                CreateHintBlock(kvp.Key, kvp.Value);
         }
 
-        private void CreateTextBlock(string text, System.Windows.Rect rect)
+        private void CreateHintBlock(string text, System.Windows.Rect rect)
         {
             TextBlock textBlock = new TextBlock
             {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Windows;
 using System.Windows.Automation;
-using WinVi.UiAutomation.Utilities;
+using WinVi.UI.Misc;
 
 namespace WinVi.UiAutomation.Taskbar
 {
@@ -31,11 +31,11 @@ namespace WinVi.UiAutomation.Taskbar
         private static readonly string _aidNotifyItemIcon = "NotifyItemIcon";
 
         // A dictionary, that stores current taskbar elements
-        private Dictionary<string, AutomationElement> _automationElementsDict = new Dictionary<string, AutomationElement>(); 
+        private Dictionary<string, Rect> _automationElementsDict = new Dictionary<string, Rect>(); 
 
         internal static Taskbar Instance => _instance.Value;
 
-        internal IReadOnlyDictionary<string, AutomationElement> AutomationElementsDict => _automationElementsDict;
+        internal IReadOnlyDictionary<string, Rect> AutomationElementsDict => _automationElementsDict;
 
         private static AutomationElement GetGlobalTaskbar()
         {
@@ -48,7 +48,7 @@ namespace WinVi.UiAutomation.Taskbar
 
         internal void FillTaskbarElementsDict()
         {
-            _automationElementsDict ??= new Dictionary<string, AutomationElement>();   
+            _automationElementsDict ??= new Dictionary<string, Rect>();   
 
             AutomationElement taskbar = GetGlobalTaskbar()
                 ?? throw new ArgumentNullException(nameof(taskbar));
@@ -61,20 +61,17 @@ namespace WinVi.UiAutomation.Taskbar
                 .FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarSystemApps))
                 ?? throw new ArgumentNullException(nameof(taskbar));
             foreach (AutomationElement element in taskbarSystemApps)
-                _automationElementsDict.Add(UIKeysGenerator.Instance.GetNextKey(), element);
+                _automationElementsDict.Add(UIKeysGenerator.Instance.GetNextKey(), element.Current.BoundingRectangle);
 
             AutomationElementCollection taskbarUserApps = taskbar
                 .FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarUserApps))
                 ?? throw new ArgumentNullException(nameof(taskbar));
             foreach (AutomationElement element in taskbarUserApps)
-                _automationElementsDict.Add(UIKeysGenerator.Instance.GetNextKey(), element);
+                _automationElementsDict.Add(UIKeysGenerator.Instance.GetNextKey(), element.Current.BoundingRectangle);
         }
 
         internal void GetContextMenu()
         {
-            AutomationElement ae= null;
-            _automationElementsDict.Add("1+ELEMENT_IDENTIFICATOR", ae);
-
             // TODO: Implement the following idea:
             // For the main taskbar elements, we implement a key like 1AA, 1AS, 1AF and so on. So, 1 will be an identifier of the main layer.
             // HOWEVER, if we open a context menu, we do 2KK, 2KL or such. Then, if there is another layer, we add 3 and so on. This is a good idea in terms of memory-efficiency

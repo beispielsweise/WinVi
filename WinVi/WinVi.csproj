@@ -80,7 +80,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="UiAutomation\Taskbar\Taskbar.cs" />
-    <Compile Include="UiAutomation\Utilities\UIKeysGenerator.cs" />
+    <Compile Include="UI\Misc\UIKeysGenerator.cs" />
     <Compile Include="UI\Tray\TrayManager.cs" />
     <Page Include="UI\OvelayWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

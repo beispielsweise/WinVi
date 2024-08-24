@@ -1,4 +1,3 @@
 ﻿TODO: 
-* instead of AutomationElement in a dict, use Windows.Rect
 * Adjust ClickManager accordingly
 * Try adding layers system to TaskbarUiAutomation (for later) 
