@@ -10,12 +10,12 @@ namespace WinVi.UiAutomation.Taskbar
     /// A class, that is responsible for finding and interracting with elements in Taskbar (Taskbar and Tray)
     /// TODO: Make 1 global function to get ALL taskbar elkements at once
     /// </summary>
-    internal class Taskbar : IDisposable
+    internal class TaskbarElements : IDisposable
     {
         // Variables with properties, that help indicate different UI Elements, placed from top to bottom
         // _cn - ClassName
         // _aid - AutomationID 
-        private static readonly Lazy<Taskbar> _instance = new Lazy<Taskbar>(() => new Taskbar(), true);
+        private static readonly Lazy<TaskbarElements> _instance = new Lazy<TaskbarElements>(() => new TaskbarElements(), true);
 
         // Global taskbar
         private static readonly string _cnGlobalTaskbarName = "Shell_TrayWnd";
@@ -33,7 +33,7 @@ namespace WinVi.UiAutomation.Taskbar
         // A dictionary, that stores current taskbar elements
         private Dictionary<string, Rect> _automationElementsDict = new Dictionary<string, Rect>(); 
 
-        internal static Taskbar Instance => _instance.Value;
+        internal static TaskbarElements Instance => _instance.Value;
 
         internal IReadOnlyDictionary<string, Rect> AutomationElementsDict => _automationElementsDict;
 

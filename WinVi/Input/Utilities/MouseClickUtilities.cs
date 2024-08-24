@@ -10,8 +10,20 @@ namespace WinVi.Input.Utilities
 {
     internal class MouseClickUtilities
     {
+
         [DllImport("user32.dll", SetLastError = true)]
-        internal static extern uint SendInput(uint nInputs, ref Input pInputs, int cbSize);
+        internal static extern bool SetCursorPos(int X, int Y);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool GetCursorPos(out POINT lpPoint); [StructLayout(LayoutKind.Sequential)]
+        internal struct POINT
+        {
+            public int X;
+            public int Y;
+        }
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern uint SendInput(uint nInputs, [In] Input[] pInputs, int cbSize);
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct Input

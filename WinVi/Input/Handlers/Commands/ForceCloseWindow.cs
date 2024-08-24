@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using WinVi.UI;
+﻿using WinVi.UI;
 using WinVi.UiAutomation.Taskbar;
 
-namespace WinVi.Input.Handlers.Hotkeys
+namespace WinVi.Input.Handlers.Commands
 {
     /// <summary>
     /// Force closes OverlayWindow
@@ -19,7 +13,7 @@ namespace WinVi.Input.Handlers.Hotkeys
             OverlayWindow.Instance.ClearHintCanvas();
             OverlayWindow.Instance.HideWindow();
 
-            Taskbar.Instance.Dispose();
+            TaskbarElements.Instance.Dispose();
         }
     }
 }

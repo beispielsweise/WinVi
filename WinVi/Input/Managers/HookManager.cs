@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using WinVi.Input.Handlers.Hotkeys;
-using WinVi.Input.Handlers.TaskbarMode;
+using System.Windows;
+using WinVi.Input.Handlers.Commands;
+using WinVi.Input.Handlers.Modes;
 using WinVi.Input.Utilities;
 using WinVi.UI.Tray;
+using WinVi.UiAutomation.Taskbar;
 
 namespace WinVi.Input
 {
@@ -93,7 +95,13 @@ namespace WinVi.Input
                             default:
                                 // TaskbarModeHandler.ProcessHintKey(vkString);
 
-                                return KeyboardHookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);                
+                                //
+                                if (TaskbarElements.Instance.AutomationElementsDict.TryGetValue("AD", out Rect rect)) {
+                                    ClickManager.Instance.Click(rect, false);
+                                }
+
+                                // return KeyboardHookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);                
+                                return (IntPtr)1;
                         }
                     }
                 }
@@ -143,7 +151,7 @@ namespace WinVi.Input
 
         private void HandleTaskbarMode()
         {
-            if (TaskbarModeHandler.Execute() == true)
+            if (TaskbarMode.Execute() == true)
             {
                 _isOverlayWindowOpened = true;
                 TrayManager.SetIconStatus(TrayIconStatus.OverlayOn);

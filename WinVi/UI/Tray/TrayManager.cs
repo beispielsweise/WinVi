@@ -45,49 +45,25 @@ namespace WinVi.UI.Tray
         /// </summary>
         public static TrayManager Instance => _instance.Value;
 
-        public static void SetIconStatus(TrayIconStatus status)
+        public static void SetIconStatus(TrayIconStatus status, string text = "")
         {
             switch (status)
             {
                 case TrayIconStatus.Default:
                     _trayIcon.Icon = Properties.Resources.DefaultIcon;
-                    _trayIcon.Text = "WinVi";
+                    _trayIcon.Text = string.IsNullOrEmpty(text) ? "WinVi" : text;
                     break;
                 case TrayIconStatus.CriticalError:
                     _trayIcon.Icon = Properties.Resources.CriticalErrorIcon;
-                    _trayIcon.Text = "Critical Error";
+                    _trayIcon.Text = string.IsNullOrEmpty(text) ? "Critical error" : text;
                     break;
                 case TrayIconStatus.InsertMode:
                     _trayIcon.Icon = Properties.Resources.InsertModeIcon;
-                    _trayIcon.Text = "Insert mode";
+                    _trayIcon.Text = string.IsNullOrEmpty(text) ? "Insert mode" : text;
                     break;
                 case TrayIconStatus.OverlayOn:
                     _trayIcon.Icon = Properties.Resources.OverlayOnIcon;
-                    _trayIcon.Text = "Overlay is on";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(status), status, null);
-            }
-        }
-        public static void SetIconStatus(TrayIconStatus status, string text)
-        {
-            switch (status)
-            {
-                case TrayIconStatus.Default:
-                    _trayIcon.Icon = Properties.Resources.DefaultIcon;
-                    _trayIcon.Text = text;
-                    break;
-                case TrayIconStatus.CriticalError:
-                    _trayIcon.Icon = Properties.Resources.CriticalErrorIcon;
-                    _trayIcon.Text = text;
-                    break;
-                case TrayIconStatus.InsertMode:
-                    _trayIcon.Icon = Properties.Resources.InsertModeIcon;
-                    _trayIcon.Text = text;
-                    break;
-                case TrayIconStatus.OverlayOn:
-                    _trayIcon.Icon = Properties.Resources.OverlayOnIcon;
-                    _trayIcon.Text = text;
+                    _trayIcon.Text = string.IsNullOrEmpty(text) ? "Overlay on" : text;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(status), status, null);
