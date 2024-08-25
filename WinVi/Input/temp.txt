@@ -1,3 +1,4 @@
 ﻿TODO: 
-* Adjust ClickManager accordingly
+* Adjust ClickManager according to MoveCursor requirements
+* Add buttons processing, shift key modifier logic. _shiftPressed && !_altPressed && !_ctrlPressed passing as bool to ProcessHintKey?, WM_KEYUP - shift not pressed, WM_KEYDOWN - SHIFT PRESSED allready implemented
 * Try adding layers system to TaskbarUiAutomation (for later) 

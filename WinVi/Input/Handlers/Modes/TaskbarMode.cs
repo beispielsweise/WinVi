@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics.Eventing.Reader;
+using System.Windows;
 using WinVi.UI;
 using WinVi.UI.Tray;
 using WinVi.UiAutomation.Taskbar;
@@ -12,7 +14,7 @@ namespace WinVi.Input.Handlers.Modes
     {
         private static string _currentSequence = string.Empty;
 
-        internal static bool Execute()
+        internal static bool OpenOverlay()
         {
             try
             {
@@ -29,24 +31,21 @@ namespace WinVi.Input.Handlers.Modes
             return true;
         }
 
-        internal static bool ProcessHintKey(string vkString)
+        internal static bool ProcessHintKey(string vkString, bool _shiftPressed)
         {
-            // Append the key to the current sequence
             _currentSequence += vkString;
 
-            // Check if the current sequence matches any keys in the dictionary
             if (TaskbarElements.Instance.AutomationElementsDict.ContainsKey(_currentSequence))
             {
+                if (TaskbarElements.Instance.AutomationElementsDict.TryGetValue(_currentSequence, out Rect rect)) {
+                    ClickManager.Instance.Click(rect, _shiftPressed);
+                }
 
-                // Reset the sequence after the action is executed
                 _currentSequence = string.Empty;
-                // A corresponding action needs to be triggered
-                
                 return true;
             }
             else if (_currentSequence.Length > 2)
             {
-                // If the sequence is invalid, reset it
                 _currentSequence = string.Empty;
                 return false;
             }

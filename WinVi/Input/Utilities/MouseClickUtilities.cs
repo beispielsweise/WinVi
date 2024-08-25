@@ -15,8 +15,8 @@ namespace WinVi.Input.Utilities
         internal static extern bool SetCursorPos(int X, int Y);
 
         [DllImport("user32.dll", SetLastError = true)]
-        internal static extern bool GetCursorPos(out POINT lpPoint); [StructLayout(LayoutKind.Sequential)]
-        internal struct POINT
+        internal static extern bool GetCursorPos(out CursorPoint lpPoint); [StructLayout(LayoutKind.Sequential)]
+        internal struct CursorPoint 
         {
             public int X;
             public int Y;

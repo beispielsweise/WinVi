@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using WinVi.Input.Utilities;
+using WinVi.UI;
 
 namespace WinVi.Input
 {
@@ -23,10 +25,11 @@ namespace WinVi.Input
             // int absoluteY = Convert.ToInt32(((rect.Y + (rect.Height / 2)) - _screen.Bounds.Top) * 65536 / _screen.Bounds.Height);
 
             // Store initial cursor position
+            MouseClickUtilities.CursorPoint currentCursorPos = GetCurrentCursorPos();
 
             var downFlag = MouseClickUtilities.MouseEventFlags.Absolute | 
                 (invokeRightClick ? MouseClickUtilities.MouseEventFlags.RightDown : MouseClickUtilities.MouseEventFlags.LeftDown);
-            var upFlag = MouseClickUtilities.MouseEventFlags.Absolute | 
+            var upFlag = MouseClickUtilities.MouseEventFlags.Absolute |
                 (invokeRightClick ? MouseClickUtilities.MouseEventFlags.RightUp : MouseClickUtilities.MouseEventFlags.LeftUp);
 
             var inputs = new[]
@@ -36,11 +39,15 @@ namespace WinVi.Input
             };
 
             // Move cursor to a needed rect position
-
-            // invoke mouse click
+            MouseClickUtilities.SetCursorPos((int)(rect.X + rect.Width / 1.5), (int)(rect.Y + rect.Height / 1.5));
+            // Hide WinVi overlay to make sure that the element is clicked properly
+            OverlayWindow.Instance.HideWindow();
             MouseClickUtilities.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(MouseClickUtilities.Input)));
 
+            // Show overlay
+            // OverlayWindow.Instance.ShowWindow();
             // Return Cursor to its initial position
+            // MouseClickUtilities.SetCursorPos(currentCursorPos.X, currentCursorPos.Y);
         }
 
         private MouseClickUtilities.Input CreateMouseInput(int x, int y, MouseClickUtilities.MouseEventFlags flags, uint mouseScrollAmount = 0)
@@ -72,5 +79,14 @@ namespace WinVi.Input
 
         powershell script to live check pixel screen coordinates
         */
+
+        private MouseClickUtilities.CursorPoint GetCurrentCursorPos()
+        {
+            if (MouseClickUtilities.GetCursorPos(out var cursorPoint))
+            {
+                return cursorPoint;
+            }
+            return new MouseClickUtilities.CursorPoint { X = -1, Y = -1};
+        }
     }
 }

@@ -89,18 +89,16 @@ namespace WinVi.Input
                         // shift modifier?
                         switch (vkString)
                         {
-                            case "escape":
+                            case "ESCAPE":
                                 CloseOverlayWindow();
                                 return (IntPtr)1;
                             default:
-                                // TaskbarModeHandler.ProcessHintKey(vkString);
-
-                                //
-                                if (TaskbarElements.Instance.AutomationElementsDict.TryGetValue("AD", out Rect rect)) {
-                                    ClickManager.Instance.Click(rect, false);
+                                if (TaskbarMode.ProcessHintKey(vkString, CheckShiftModifierPressed()))
+                                {
+                                    _isOverlayWindowOpened = false;
+                                    TrayManager.SetIconStatus(TrayIconStatus.Default);
                                 }
 
-                                // return KeyboardHookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);                
                                 return (IntPtr)1;
                         }
                     }
@@ -111,7 +109,7 @@ namespace WinVi.Input
                     // Logic for exiting the insert mode, ESC key
                     if (_isInsertModeEnabled)
                     {
-                        if (vkString == "escape")
+                        if (vkString == "ESCAPE")
                         {
                             ExitInsertMode();
                             return (IntPtr)1;
@@ -126,10 +124,10 @@ namespace WinVi.Input
                         /*case "l":
                             _toggleWindowHandler.Execute();
                             return (IntPtr)1;*/
-                        case "t":
+                        case "T":
                             HandleTaskbarMode();
                             return (IntPtr)1;
-                        case "i":
+                        case "I":
                             EnterInsertMode();
                             return (IntPtr)1;
                         default:
@@ -151,7 +149,7 @@ namespace WinVi.Input
 
         private void HandleTaskbarMode()
         {
-            if (TaskbarMode.Execute() == true)
+            if (TaskbarMode.OpenOverlay() == true)
             {
                 _isOverlayWindowOpened = true;
                 TrayManager.SetIconStatus(TrayIconStatus.OverlayOn);
@@ -181,13 +179,13 @@ namespace WinVi.Input
             // Hotkey mechanism logic
             switch (vkString)
             {
-                case "shift":
+                case "SHIFT":
                     _shiftPressed = isKeyDown;
                     break;
-                case "ctrl":
+                case "CTRL":
                     _ctrlPressed = isKeyDown;
                     break;
-                case "alt":
+                case "ALT":
                     _altPressed = isKeyDown;
                     break;
                 default:
@@ -198,6 +196,11 @@ namespace WinVi.Input
         private bool CheckHotkeyCombinationPressed()
         {
             return _ctrlPressed && _altPressed && _shiftPressed;
+        }
+
+        private bool CheckShiftModifierPressed()
+        {
+            return _shiftPressed && !_altPressed && !_ctrlPressed;
         }
 
         /// <summary>

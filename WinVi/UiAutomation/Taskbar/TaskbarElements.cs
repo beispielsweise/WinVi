@@ -57,12 +57,13 @@ namespace WinVi.UiAutomation.Taskbar
                 ?? throw new ArgumentNullException(nameof(taskbar));
 
             UIKeysGenerator.Instance.Reset();
+            /*
             AutomationElementCollection taskbarSystemApps = taskbar
                 .FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarSystemApps))
                 ?? throw new ArgumentNullException(nameof(taskbar));
             foreach (AutomationElement element in taskbarSystemApps)
                 _automationElementsDict.Add(UIKeysGenerator.Instance.GetNextKey(), element.Current.BoundingRectangle);
-
+            */
             AutomationElementCollection taskbarUserApps = taskbar
                 .FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarUserApps))
                 ?? throw new ArgumentNullException(nameof(taskbar));
