@@ -93,10 +93,20 @@ namespace WinVi.Input
                                 CloseOverlayWindow();
                                 return (IntPtr)1;
                             default:
-                                if (TaskbarMode.ProcessHintKey(vkString, CheckShiftModifierPressed()))
+                                // !!!
+                                switch (TaskbarMode.ProcessHintKey(vkString, CheckShiftModifierPressed()))
                                 {
-                                    _isOverlayWindowOpened = false;
-                                    TrayManager.SetIconStatus(TrayIconStatus.Default);
+                                    case TaskbarMode.HintKeyStatus.Pressed:
+                                        _isOverlayWindowOpened = false;
+                                        TaskbarElements.Instance.Dispose();
+                                        TrayManager.SetIconStatus(TrayIconStatus.Default);
+                                        return (IntPtr)1;
+                                    case TaskbarMode.HintKeyStatus.Error:
+                                        break;
+                                    case TaskbarMode.HintKeyStatus.Skip:
+                                        break;
+                                    default:
+                                        return KeyboardHookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
                                 }
 
                                 return (IntPtr)1;
@@ -121,9 +131,6 @@ namespace WinVi.Input
                     // Process hotkeys
                     switch (vkString)
                     {
-                        /*case "l":
-                            _toggleWindowHandler.Execute();
-                            return (IntPtr)1;*/
                         case "T":
                             HandleTaskbarMode();
                             return (IntPtr)1;
@@ -216,22 +223,3 @@ namespace WinVi.Input
         }
     }
 }
-
-
-
-// USELESS STUFF
-
-                // This is THE STUPID. 
-                // So this is only for usual keys, no F1-F12 are allowed, or tabs or anything like that. 
-                // That is because we are working with windows here and those buttons are crucial for the app to work. 
-                // So, to ensure we are working only with usual keys, we are:
-                // Checking if length is 1, then it is just a key like "l" or "k" etc
-                // Checking if there is "oem" included. This is just a keyboard shenanigan for a couple of characters, like comma or dot
-                // Checking if there is "d" followed by a number. This is by far the most idiotic one, while numbers 0-9 on a keyboard are labled as d0-d9
-                //      The same would go for F1-F12 keys, but we are not using them :)
-                //      So, to ensure that we are not missing out on any of em we are using a regex expression.
-                // ! THIS CAN BE OPTIMISED (so maybe fix it later)
-                //if (vkString.Length == 1 || vkString.Contains("oem") || Regex.IsMatch(vkString, @"d\d+"))
-                //{
-                //}
-

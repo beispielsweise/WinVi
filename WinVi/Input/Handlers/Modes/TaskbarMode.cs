@@ -13,6 +13,12 @@ namespace WinVi.Input.Handlers.Modes
     internal class TaskbarMode
     {
         private static string _currentSequence = string.Empty;
+        public enum HintKeyStatus
+        {
+            Pressed,
+            Error,
+            Skip
+        }
 
         internal static bool OpenOverlay()
         {
@@ -31,27 +37,28 @@ namespace WinVi.Input.Handlers.Modes
             return true;
         }
 
-        internal static bool ProcessHintKey(string vkString, bool _shiftPressed)
+        internal static HintKeyStatus ProcessHintKey(string vkString, bool _shiftPressed)
         {
             _currentSequence += vkString;
 
             if (TaskbarElements.Instance.AutomationElementsDict.ContainsKey(_currentSequence))
             {
-                if (TaskbarElements.Instance.AutomationElementsDict.TryGetValue(_currentSequence, out Rect rect)) {
+                if (TaskbarElements.Instance.AutomationElementsDict.TryGetValue(_currentSequence, out Rect rect))
+                {
                     ClickManager.Instance.Click(rect, _shiftPressed);
                 }
 
                 _currentSequence = string.Empty;
-                return true;
+                return HintKeyStatus.Pressed;
             }
-            else if (_currentSequence.Length > 2)
+            else if (_currentSequence.Length >= 2)
             {
                 _currentSequence = string.Empty;
-                return false;
+                return HintKeyStatus.Error;
             }
             else
             {
-                return false;
+                return HintKeyStatus.Skip;
             }
         }
     }
