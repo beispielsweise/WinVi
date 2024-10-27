@@ -22,7 +22,7 @@ namespace WinVi
             }
             catch 
             {
-                TrayManager.SetIconStatus(TrayIconStatus.CriticalError); 
+                TrayManager.SetIconStatus(TrayIconStatus.CriticalError, "Hook Manager failed to initialize"); 
             }
             _ = UIKeysGenerator.Instance;
             _ = ClickManager.Instance;

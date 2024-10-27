@@ -25,7 +25,7 @@ namespace WinVi.Input.Utilities
 
         // Delegate for the hook procedure
         internal delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
-        // public IntPtr _hookID = IntPtr.Zero; - needs to be included in each an every hook, because you know. Duh.
+        // public IntPtr _hookID = IntPtr.Zero; - needs to be included in each an every hook
 
         internal enum KeyboardHooks : int
         {
@@ -39,7 +39,9 @@ namespace WinVi.Input.Utilities
             SyskeyDown = 0x0104
         }
 
-
+        /// <summary>
+        /// KeyCodes dicrionaty. Should be faster than using pre-built options
+        /// </summary>
         internal static readonly IReadOnlyDictionary<int, string> _vkKeyCodes = new Dictionary<int, string>
         {
             { 27, "ESCAPE" },

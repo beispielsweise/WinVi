@@ -11,9 +11,12 @@ namespace WinVi.UI.Misc
     {
         private static readonly Lazy<UIKeysGenerator> _instance = new Lazy<UIKeysGenerator>(() => new UIKeysGenerator(), true);
 
-        private static readonly string _commonCharactersString = "ASDFGHJKL";
-        private static readonly string _extendedCharactersString = "ZXCVBNMQWERTYUIOP";
+        private static readonly string _commonCharactersString = "ASDFGHJKL"; // Commonly used characters in the middle line
+        private static readonly string _extendedCharactersString = "ZXCVBNMQWERTYUIOP"; // In some rare cases, to make sure there are enough characters. Will be deleted though. 
+
+        // Final array of available keys
         private readonly string[] _keys;
+        // Index to determine the current iteration through _keys
         private int _index;
 
         internal static UIKeysGenerator Instance => _instance.Value;
@@ -25,9 +28,7 @@ namespace WinVi.UI.Misc
 
             _keys = new string[charCommonKeys.Length * charCommonKeys.Length + charExtendedKeys.Length * charExtendedKeys.Length];
 
-            // Adding common keys
             _index = 0;
-
             foreach (char firstC in charCommonKeys)
             {
                 foreach (char secondC in charCommonKeys)
@@ -42,6 +43,11 @@ namespace WinVi.UI.Misc
             _index = 0;
         }
 
+        /// <summary>
+        /// Gets keys to be used with corresponging UI Elements
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         internal string GetNextKey()
         {
             if (_index >= _keys.Length)
@@ -50,6 +56,9 @@ namespace WinVi.UI.Misc
             return _keys[_index++];
         }
 
+        /// <summary>
+        /// Forse-resets _index value
+        /// </summary>
         internal void Reset()
         {
             _index = 0;

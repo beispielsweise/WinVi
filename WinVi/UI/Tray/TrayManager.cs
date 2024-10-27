@@ -35,8 +35,7 @@ namespace WinVi.UI.Tray
             contextMenu.MenuItems.Add("Exit", OnExitTrayManager);
 
             _trayIcon.ContextMenu = contextMenu;
-
-            // _trayIcon.DoubleClick += (sender, args) => ShowWindow();
+            // _trayIcon.DoubleClick += (sender, args) => ShowWindow();     // Accessing settings menu in the future
 
         }
 
@@ -45,7 +44,13 @@ namespace WinVi.UI.Tray
         /// </summary>
         public static TrayManager Instance => _instance.Value;
 
-        public static void SetIconStatus(TrayIconStatus status, string text = "")
+        /// <summary>
+        /// Sets tray icon status 
+        /// </summary>
+        /// <param name="status">Corresponding resource status</param>
+        /// <param name="text">Text to be displayed, optional</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static void SetIconStatus(TrayIconStatus status, string text = "???")
         {
             switch (status)
             {

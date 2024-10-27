@@ -93,22 +93,7 @@ namespace WinVi.Input
                                 CloseOverlayWindow();
                                 return (IntPtr)1;
                             default:
-                                // !!!
-                                switch (TaskbarMode.ProcessHintKey(vkString, CheckShiftModifierPressed()))
-                                {
-                                    case TaskbarMode.HintKeyStatus.Pressed:
-                                        _isOverlayWindowOpened = false;
-                                        TaskbarElements.Instance.Dispose();
-                                        TrayManager.SetIconStatus(TrayIconStatus.Default);
-                                        return (IntPtr)1;
-                                    case TaskbarMode.HintKeyStatus.Error:
-                                        break;
-                                    case TaskbarMode.HintKeyStatus.Skip:
-                                        break;
-                                    default:
-                                        return KeyboardHookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
-                                }
-
+                                HandleHintKeypress(); 
                                 return (IntPtr)1;
                         }
                     }
@@ -132,7 +117,7 @@ namespace WinVi.Input
                     switch (vkString)
                     {
                         case "T":
-                            HandleTaskbarMode();
+                            EnterTaskbarMode();
                             return (IntPtr)1;
                         case "I":
                             EnterInsertMode();
@@ -148,39 +133,74 @@ namespace WinVi.Input
             return KeyboardHookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
-        private void EnterInsertMode()
-        {
-            _isInsertModeEnabled = true;
-            TrayManager.SetIconStatus(TrayIconStatus.InsertMode);
-        }
-
-        private void HandleTaskbarMode()
+        /// <summary>
+        /// Opens OvelayWindow, sets icon statuses for TaskbarMode
+        /// </summary>
+        private void EnterTaskbarMode()
         {
             if (TaskbarMode.OpenOverlay() == true)
             {
                 _isOverlayWindowOpened = true;
                 TrayManager.SetIconStatus(TrayIconStatus.OverlayOn);
             }
+            else
+                TrayManager.SetIconStatus(TrayIconStatus.CriticalError, "Overlay was not opened for TaskbarMode");
         }
+
+        /// <summary>
+        /// WHEN Overlay Window is opened, processes hint keys
+        /// </summary>
+        private void HandleHintKeypress()
+        {
+            switch (TaskbarMode.ProcessHintKey(vkString, CheckShiftModifierPressed()))
+            {
+                case TaskbarMode.HintKeyStatus.Pressed:
+                    CloseOverlayWindow();
+                    return;
+                case TaskbarMode.HintKeyStatus.Error:
+                    return;
+                case TaskbarMode.HintKeyStatus.Skip:
+                    return;
+                default:
+                    return;
+            }
+        }
+
+        /// <summary>
+        /// Prevents program from accessing keyboard presses
+        /// </summary>
+        private void EnterInsertMode()
+        {
+            _isInsertModeEnabled = true;
+            TrayManager.SetIconStatus(TrayIconStatus.InsertMode);
+        }
+
+        /// <summary>
+        /// Exits insert mode
+        /// </summary>
         private void ExitInsertMode()
         {
             _isInsertModeEnabled = false;
             TrayManager.SetIconStatus(TrayIconStatus.Default);
         }
 
+        /// <summary>
+        /// Force closes overlay window
+        /// </summary>
         private void CloseOverlayWindow()
         {
             _isOverlayWindowOpened = false;
+            TaskbarElements.Instance.Dispose();
             ForceCloseWindow.Execute();
             TrayManager.SetIconStatus(TrayIconStatus.Default);
         }
 
         /// <summary>
         /// Checks if buttons CTRL SHIFT and ALT are pressed at the same time. 
-        /// This is a standart shortcut modifyer which is NOT intended to be changed.
+        /// This is a standart shortcut modifyer which is NOT intended to be changed
         /// </summary>
-        /// <param name="vkString"> string: with a lowercase character</param>
-        /// <param name="isKeyDown">bool: is key pressed</param>
+        /// <param name="vkString"> keyboard character pressed</param>
+        /// <param name="isKeyDown">is key pressed down</param>
         private void CheckHotkeyButtonPressed(string vkString, bool isKeyDown)
         {
             // Hotkey mechanism logic
@@ -200,11 +220,19 @@ namespace WinVi.Input
             }
         }
 
+        /// <summary>
+        /// Check if main Hotkey combination is pressed
+        /// </summary>
+        /// <returns></returns>
         private bool CheckHotkeyCombinationPressed()
         {
             return _ctrlPressed && _altPressed && _shiftPressed;
         }
 
+        /// <summary>
+        /// Checks if the Shift modifier is pressed (without alt or ctrl)
+        /// </summary>
+        /// <returns></returns>
         private bool CheckShiftModifierPressed()
         {
             return _shiftPressed && !_altPressed && !_ctrlPressed;

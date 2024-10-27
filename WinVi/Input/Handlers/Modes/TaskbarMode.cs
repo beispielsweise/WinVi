@@ -8,11 +8,12 @@ using WinVi.UiAutomation.Taskbar;
 namespace WinVi.Input.Handlers.Modes
 {
     /// <summary>
-    /// A class responsible for TaskbarMode
+    /// A class responsible for processing TaskbarMode commands
     /// </summary>
     internal class TaskbarMode
     {
         private static string _currentSequence = string.Empty;
+        // Return types, used to set TrayIcon status
         public enum HintKeyStatus
         {
             Pressed,
@@ -20,6 +21,10 @@ namespace WinVi.Input.Handlers.Modes
             Skip
         }
 
+        /// <summary>
+        /// Processes initial overlay window opening
+        /// </summary>
+        /// <returns></returns>
         internal static bool OpenOverlay()
         {
             try
@@ -37,6 +42,12 @@ namespace WinVi.Input.Handlers.Modes
             return true;
         }
 
+        /// <summary>
+        /// Processes a hint key, that user pressed
+        /// </summary>
+        /// <param name="vkString">Key name</param>
+        /// <param name="_shiftPressed">Is used to determine the right click, e.g. user pressing AA or aA or A</param>
+        /// <returns>A status tat is passed to TrayIcon</returns>
         internal static HintKeyStatus ProcessHintKey(string vkString, bool _shiftPressed)
         {
             _currentSequence += vkString;

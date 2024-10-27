@@ -35,8 +35,15 @@ namespace WinVi.UiAutomation.Taskbar
 
         internal static TaskbarElements Instance => _instance.Value;
 
+        /// <summary>
+        /// Access _automationElementDict instance 
+        /// </summary>
         internal IReadOnlyDictionary<string, Rect> AutomationElementsDict => _automationElementsDict;
 
+        /// <summary>
+        /// Get global taskbar AutomationElement
+        /// </summary>
+        /// <returns></returns>
         private static AutomationElement GetGlobalTaskbar()
         {
             AutomationElement taskbar = AutomationElement
@@ -46,6 +53,10 @@ namespace WinVi.UiAutomation.Taskbar
             return taskbar;
         }
 
+        /// <summary>
+        /// Fills _automationElementsDict with corresponding HintKeys and Positions
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Is thrown in case some of the taskbar elements were empty</exception>
         internal void FillTaskbarElementsDict()
         {
             _automationElementsDict ??= new Dictionary<string, Rect>();   
@@ -73,15 +84,9 @@ namespace WinVi.UiAutomation.Taskbar
 
         internal void GetContextMenu()
         {
-            // TODO: Implement the following idea:
-            // For the main taskbar elements, we implement a key like 1AA, 1AS, 1AF and so on. So, 1 will be an identifier of the main layer.
-            // HOWEVER, if we open a context menu, we do 2KK, 2KL or such. Then, if there is another layer, we add 3 and so on. This is a good idea in terms of memory-efficiency
-        }
-
-        public void InvokeDictElement(string key)
-        {
-            // Console.WriteLine(_automationElementsDict[key].Current.Name);
-            
+            // TODO:
+            // The parent element (e.g. AA) should be always on display, but the child elements (Context Menu in this case, rename?)
+            // should be displayed with it as well. How to detect a child element - that is a question for later
         }
 
         public void Dispose()

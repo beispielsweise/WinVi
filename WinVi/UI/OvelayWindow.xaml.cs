@@ -16,7 +16,6 @@ namespace WinVi.UI
         public OverlayWindow()
         {
             InitializeComponent();
-            
             ModifyWindow();
         }
 
@@ -57,23 +56,34 @@ namespace WinVi.UI
             HintCanvas.Height = SystemParameters.PrimaryScreenHeight;
             HintCanvas.Width = SystemParameters.PrimaryScreenWidth;
         }
-
+        
+        // Redundant, replace
         internal void HideWindow()
         {
             this.Hide();
         }
 
+        // Redundant, replace
         internal void ShowWindow()
         {
             this.Show(); 
         }
 
+        /// <summary>
+        /// Initializes the process of drawing keys to the overlay window 
+        /// </summary>
+        /// <param name="dict"></param>
         internal void DrawHintCanvas(IReadOnlyDictionary<string, Rect> dict)
         {
             foreach (KeyValuePair<string, Rect> kvp in dict)
                 CreateHintBlock(kvp.Key, kvp.Value);
         }
 
+        /// <summary>
+        /// Creates a single Hint element
+        /// </summary>
+        /// <param name="text">Text to be displayed over the element</param>
+        /// <param name="rect">Position of the element</param>
         private void CreateHintBlock(string text, System.Windows.Rect rect)
         {
             TextBlock textBlock = new TextBlock
@@ -104,6 +114,9 @@ namespace WinVi.UI
             HintCanvas.Children.Add(border);
         }
 
+        /// <summary>
+        /// Force clears the Hint Canvas
+        /// </summary>
         internal void ClearHintCanvas()
         {
             HintCanvas.Children.Clear();
