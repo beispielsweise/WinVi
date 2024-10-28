@@ -36,7 +36,8 @@ namespace WinVi.Input.Utilities
         {
             KeyDown = 0x0100,
             KeyUp = 0x0101,
-            SyskeyDown = 0x0104
+            SyskeyDown = 0x0104,
+            SyskeyUp = 0x0105
         }
 
         /// <summary>

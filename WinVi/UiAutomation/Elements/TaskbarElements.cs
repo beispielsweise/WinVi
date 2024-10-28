@@ -60,11 +60,13 @@ namespace WinVi.UiAutomation.Elements
             UIKeysGenerator.Instance.Reset();
 
             // Windows and Search elements
+            /*
             AutomationElementCollection taskbarSystemApps = taskbar
                 .FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarSystemApps))
                 ?? throw new Exception("ToggleButton system elements not found");
             foreach (AutomationElement element in taskbarSystemApps)
                 AutomationElementsDictionary.Instance.AddElement(UIKeysGenerator.Instance.GetNextKey(), element.Current.BoundingRectangle);
+            */
             // All the other apps on the taskbar
             AutomationElementCollection taskbarUserApps = taskbar
                 .FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarUserApps))

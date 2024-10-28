@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Data;
 using WinVi.Input.Handlers.Commands;
 using WinVi.Input.Handlers.Modes;
 using WinVi.Input.Utilities;
@@ -80,14 +82,11 @@ namespace WinVi.Input
             {
                 CheckHotkeyButtonPressed(vkString, true);
 
-                // If the hotkey combintation is not pressed AND insert mode is not active
-                // Process single-press buttons
                 if (!CheckHotkeyCombinationPressed() && !_isInsertModeEnabled)
                 {
                     // If overlay window is opened, process only these keys
                     if (_isOverlayWindowOpened)
                     {
-                        // shift modifier?
                         switch (vkString)
                         {
                             case KeyboardHookUtilities.escapeKeyName:
@@ -99,10 +98,8 @@ namespace WinVi.Input
                         }
                     }
                 }
-                // If the hotkey combination is pressed
                 else if (CheckHotkeyCombinationPressed() && !_isOverlayWindowOpened)
                 {
-                    // Logic for exiting the insert mode, ESC key
                     if (_isInsertModeEnabled)
                     {
                         if (vkString == KeyboardHookUtilities.escapeKeyName)
@@ -110,11 +107,9 @@ namespace WinVi.Input
                             ExitInsertMode();
                             return (IntPtr)1;
                         }
-
                         return KeyboardHookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
                     }
 
-                    // Process hotkeys
                     switch (vkString)
                     {
                         case KeyboardHookUtilities.taskbarModeKeyName:
@@ -128,7 +123,7 @@ namespace WinVi.Input
                     }
                 }
             }
-            else if (wParam == (IntPtr)KeyboardHookUtilities.KeyboardEventTypes.KeyUp)
+            else if (wParam == (IntPtr)KeyboardHookUtilities.KeyboardEventTypes.KeyUp || (wParam == (IntPtr)KeyboardHookUtilities.KeyboardEventTypes.SyskeyUp))
                 CheckHotkeyButtonPressed(vkString, false);
 
             return KeyboardHookUtilities.CallNextHookEx(_hookID, nCode, wParam, lParam);
@@ -139,7 +134,7 @@ namespace WinVi.Input
         /// </summary>
         private void EnterTaskbarMode()
         {
-            if (TaskbarMode.OpenOverlay() == true)
+            if (TaskbarMode.OpenOverlay())
             {
                 _isOverlayWindowOpened = true;
                 TrayManager.SetIconStatus(TrayIconStatus.OverlayOn);
@@ -157,6 +152,7 @@ namespace WinVi.Input
                     CloseOverlayWindow();
                     return;
                 case TaskbarMode.HintKeyStatus.Error:
+                    TrayManager.SetIconStatus(TrayIconStatus.Default, "Hint does not exist");
                     return;
                 case TaskbarMode.HintKeyStatus.Skip:
                     return;
@@ -189,7 +185,8 @@ namespace WinVi.Input
         private void CloseOverlayWindow()
         {
             _isOverlayWindowOpened = false;
-            AutomationElementsDictionary.Instance.Dispose();
+            TaskbarMode.ResetCurrentSequence();
+            AutomationElementsDictionary.Instance.Dispose() ;
             ForceCloseWindow.Execute();
             TrayManager.SetIconStatus(TrayIconStatus.Default);
         }

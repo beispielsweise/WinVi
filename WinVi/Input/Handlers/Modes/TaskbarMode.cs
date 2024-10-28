@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Windows;
 using WinVi.Input.Utilities;
@@ -52,16 +53,16 @@ namespace WinVi.Input.Handlers.Modes
         /// <returns>A status tat is passed to TrayIcon</returns>
         internal static HintKeyStatus ProcessHintKey(string vkString, bool _shiftPressed)
         {
-            if (!vkString.Equals(KeyboardHookUtilities.shiftKeyName))
-                _currentSequence += vkString;
+            if (vkString.Equals(KeyboardHookUtilities.shiftKeyName)) 
+                return HintKeyStatus.Skip;
 
+            _currentSequence += vkString;
             if (AutomationElementsDictionary.Instance.ContainsKey(_currentSequence))
             {
                 if (AutomationElementsDictionary.Instance.TryGetValue(_currentSequence, out Rect rect))
                 {
                     ClickManager.Instance.Click(rect, _shiftPressed, false);
                 }
-
                 _currentSequence = string.Empty;
                 return HintKeyStatus.Pressed;
             }
@@ -74,6 +75,14 @@ namespace WinVi.Input.Handlers.Modes
             {
                 return HintKeyStatus.Skip;
             }
+        }
+        
+        /// <summary>
+        /// Resets current sequence counter
+        /// </summary>
+        internal static void ResetCurrentSequence()
+        {
+            _currentSequence = null;
         }
     }
 }
