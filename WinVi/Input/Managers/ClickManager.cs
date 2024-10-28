@@ -26,7 +26,7 @@ namespace WinVi.Input
         /// </summary>
         /// <param name="rect">Rectangle with the position coordinates</param>
         /// <param name="invokeRightClick">If right click should be performed</param>
-        /// <param bame="returnCursor">If the cursor should be returned to it's initial position, default = true</param>
+        /// <param bame="returnCursor">If the cursor should be returned to it's initial position, default = true</param>е
         public void Click(Rect rect, bool invokeRightClick, bool returnCursor = true)
         {
             MouseClickUtilities.CursorPoint currentCursorPos = GetCurrentCursorPos();

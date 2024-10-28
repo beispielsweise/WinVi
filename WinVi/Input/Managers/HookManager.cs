@@ -5,7 +5,8 @@ using WinVi.Input.Handlers.Commands;
 using WinVi.Input.Handlers.Modes;
 using WinVi.Input.Utilities;
 using WinVi.UI.Tray;
-using WinVi.UiAutomation.Taskbar;
+using WinVi.UiAutomation;
+using WinVi.UiAutomation.Elements;
 
 namespace WinVi.Input
 {
@@ -89,7 +90,7 @@ namespace WinVi.Input
                         // shift modifier?
                         switch (vkString)
                         {
-                            case "ESCAPE":
+                            case KeyboardHookUtilities.escapeKeyName:
                                 CloseOverlayWindow();
                                 return (IntPtr)1;
                             default:
@@ -104,7 +105,7 @@ namespace WinVi.Input
                     // Logic for exiting the insert mode, ESC key
                     if (_isInsertModeEnabled)
                     {
-                        if (vkString == "ESCAPE")
+                        if (vkString == KeyboardHookUtilities.escapeKeyName)
                         {
                             ExitInsertMode();
                             return (IntPtr)1;
@@ -116,10 +117,10 @@ namespace WinVi.Input
                     // Process hotkeys
                     switch (vkString)
                     {
-                        case "T":
+                        case KeyboardHookUtilities.taskbarModeKeyName:
                             EnterTaskbarMode();
                             return (IntPtr)1;
-                        case "I":
+                        case KeyboardHookUtilities.insertModeKeyName:
                             EnterInsertMode();
                             return (IntPtr)1;
                         default:
@@ -143,8 +144,6 @@ namespace WinVi.Input
                 _isOverlayWindowOpened = true;
                 TrayManager.SetIconStatus(TrayIconStatus.OverlayOn);
             }
-            else
-                TrayManager.SetIconStatus(TrayIconStatus.CriticalError, "Overlay was not opened for TaskbarMode");
         }
 
         /// <summary>
@@ -190,7 +189,7 @@ namespace WinVi.Input
         private void CloseOverlayWindow()
         {
             _isOverlayWindowOpened = false;
-            TaskbarElements.Instance.Dispose();
+            AutomationElementsDictionary.Instance.Dispose();
             ForceCloseWindow.Execute();
             TrayManager.SetIconStatus(TrayIconStatus.Default);
         }
@@ -206,13 +205,13 @@ namespace WinVi.Input
             // Hotkey mechanism logic
             switch (vkString)
             {
-                case "SHIFT":
+                case KeyboardHookUtilities.shiftKeyName:
                     _shiftPressed = isKeyDown;
                     break;
-                case "CTRL":
+                case KeyboardHookUtilities.ctrlKeyName:
                     _ctrlPressed = isKeyDown;
                     break;
-                case "ALT":
+                case KeyboardHookUtilities.altKeyName:
                     _altPressed = isKeyDown;
                     break;
                 default:

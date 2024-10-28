@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using WinVi.UiAutomation;
 
 namespace WinVi.UI
 {
@@ -73,9 +74,9 @@ namespace WinVi.UI
         /// Initializes the process of drawing keys to the overlay window 
         /// </summary>
         /// <param name="dict"></param>
-        internal void DrawHintCanvas(IReadOnlyDictionary<string, Rect> dict)
+        internal void DrawHintCanvas()
         {
-            foreach (KeyValuePair<string, Rect> kvp in dict)
+            foreach (KeyValuePair<string, Rect> kvp in AutomationElementsDictionary.Instance.GetDictionary())
                 CreateHintBlock(kvp.Key, kvp.Value);
         }
 

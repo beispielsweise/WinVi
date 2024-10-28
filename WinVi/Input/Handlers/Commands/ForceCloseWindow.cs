@@ -1,5 +1,6 @@
 ﻿using WinVi.UI;
-using WinVi.UiAutomation.Taskbar;
+using WinVi.UiAutomation;
+using WinVi.UiAutomation.Elements;
 
 namespace WinVi.Input.Handlers.Commands
 {
@@ -13,7 +14,7 @@ namespace WinVi.Input.Handlers.Commands
             OverlayWindow.Instance.ClearHintCanvas();
             OverlayWindow.Instance.HideWindow();
 
-            TaskbarElements.Instance.Dispose();
+            AutomationElementsDictionary.Instance.Dispose();
         }
     }
 }

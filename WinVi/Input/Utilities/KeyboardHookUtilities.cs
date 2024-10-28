@@ -118,5 +118,13 @@ namespace WinVi.Input.Utilities
             { 40, "DOWN" },
             { 39, "RIGHT" }
         };
+
+        internal const string shiftKeyName = "SHIFT";
+        internal const string ctrlKeyName = "CTRL";
+        internal const string altKeyName = "ALT";
+
+        internal const string escapeKeyName = "ESCAPE";
+        internal const string insertModeKeyName = "I";
+        internal const string taskbarModeKeyName = "T";
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics.Eventing.Reader;
 using System.Windows;
+using WinVi.Input.Utilities;
 using WinVi.UI;
 using WinVi.UI.Tray;
-using WinVi.UiAutomation.Taskbar;
+using WinVi.UiAutomation;
+using WinVi.UiAutomation.Elements;
 
 namespace WinVi.Input.Handlers.Modes
 {
@@ -29,15 +31,15 @@ namespace WinVi.Input.Handlers.Modes
         {
             try
             {
-                TaskbarElements.Instance.FillTaskbarElementsDict();
+                TaskbarElements.FillTaskbarElementsDict();
             }
-            catch (ArgumentNullException)
+            catch (Exception e)
             {
-                TrayManager.SetIconStatus(TrayIconStatus.CriticalError, "Cannot find taskbar elements. Taskbar hidden?");
+                TrayManager.SetIconStatus(TrayIconStatus.CriticalError, e.Message);
                 return false;
             }
 
-            OverlayWindow.Instance.DrawHintCanvas(TaskbarElements.Instance.AutomationElementsDict);
+            OverlayWindow.Instance.DrawHintCanvas();
             OverlayWindow.Instance.Show();
             return true;
         }
@@ -50,13 +52,14 @@ namespace WinVi.Input.Handlers.Modes
         /// <returns>A status tat is passed to TrayIcon</returns>
         internal static HintKeyStatus ProcessHintKey(string vkString, bool _shiftPressed)
         {
-            _currentSequence += vkString;
+            if (!vkString.Equals(KeyboardHookUtilities.shiftKeyName))
+                _currentSequence += vkString;
 
-            if (TaskbarElements.Instance.AutomationElementsDict.ContainsKey(_currentSequence))
+            if (AutomationElementsDictionary.Instance.ContainsKey(_currentSequence))
             {
-                if (TaskbarElements.Instance.AutomationElementsDict.TryGetValue(_currentSequence, out Rect rect))
+                if (AutomationElementsDictionary.Instance.TryGetValue(_currentSequence, out Rect rect))
                 {
-                    ClickManager.Instance.Click(rect, _shiftPressed);
+                    ClickManager.Instance.Click(rect, _shiftPressed, false);
                 }
 
                 _currentSequence = string.Empty;
