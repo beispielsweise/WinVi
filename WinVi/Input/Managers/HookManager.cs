@@ -6,6 +6,7 @@ using System.Windows.Data;
 using WinVi.Input.Handlers.Commands;
 using WinVi.Input.Handlers.Modes;
 using WinVi.Input.Utilities;
+using WinVi.UI;
 using WinVi.UI.Tray;
 using WinVi.UiAutomation;
 using WinVi.UiAutomation.Elements;
@@ -87,6 +88,7 @@ namespace WinVi.Input
                     // If overlay window is opened, process only these keys
                     if (_isOverlayWindowOpened)
                     {
+                        OverlayWindow.Instance.Show();
                         switch (vkString)
                         {
                             case KeyboardHookUtilities.escapeKeyName:
@@ -146,9 +148,19 @@ namespace WinVi.Input
         /// </summary>
         private void HandleHintKeypress()
         {
-            switch (TaskbarMode.ProcessHintKey(vkString, CheckShiftModifierPressed()))
+            switch (TaskbarMode.ProcessHintKey(vkString, CheckShiftModifierPressed(), out string hint))
             {
-                case TaskbarMode.HintKeyStatus.Pressed:
+                case TaskbarMode.HintKeyStatus.LeftClickPressed:
+                    CloseOverlayWindow();
+                    return;
+                case TaskbarMode.HintKeyStatus.RightClickPressed:
+                    // TODO: Check if return type is sequence from right click, this should triger context menu and further hint elements
+                    // if (sequence != null)
+                    // GetContextMenu, FillContextMenuElements
+                    // else: 
+                    // GetContextMenu (hint);
+                
+                    // !!! PLACEHOLDER
                     CloseOverlayWindow();
                     return;
                 case TaskbarMode.HintKeyStatus.Error:
@@ -186,7 +198,7 @@ namespace WinVi.Input
         {
             _isOverlayWindowOpened = false;
             TaskbarMode.ResetCurrentSequence();
-            AutomationElementsDictionary.Instance.Dispose() ;
+            AutomationElementDictionary.Instance.Dispose() ;
             ForceCloseWindow.Execute();
             TrayManager.SetIconStatus(TrayIconStatus.Default);
         }

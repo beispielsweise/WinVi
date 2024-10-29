@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Media;
 using WinVi.UiAutomation;
 
@@ -68,6 +71,7 @@ namespace WinVi.UI
         internal void ShowWindow()
         {
             this.Show(); 
+            this.Topmost= true;
         }
 
         /// <summary>
@@ -76,7 +80,7 @@ namespace WinVi.UI
         /// <param name="dict"></param>
         internal void DrawHintCanvas()
         {
-            foreach (KeyValuePair<string, Rect> kvp in AutomationElementsDictionary.Instance.GetDictionary())
+            foreach (KeyValuePair<string, Rect> kvp in AutomationElementDictionary.Instance.GetDictionary())
                 CreateHintBlock(kvp.Key, kvp.Value);
         }
 

@@ -16,10 +16,12 @@ namespace WinVi.Input.Handlers.Modes
     internal class TaskbarMode
     {
         private static string _currentSequence = string.Empty;
+
         // Return types, used to set TrayIcon status
         public enum HintKeyStatus
         {
-            Pressed,
+            LeftClickPressed,
+            RightClickPressed,
             Error,
             Skip
         }
@@ -51,20 +53,28 @@ namespace WinVi.Input.Handlers.Modes
         /// <param name="vkString">Key name</param>
         /// <param name="_shiftPressed">Is used to determine the right click, e.g. user pressing AA or aA or A</param>
         /// <returns>A status tat is passed to TrayIcon</returns>
-        internal static HintKeyStatus ProcessHintKey(string vkString, bool _shiftPressed)
+        internal static HintKeyStatus ProcessHintKey(string vkString, bool _shiftPressed, out string hint)
         {
-            if (vkString.Equals(KeyboardHookUtilities.shiftKeyName)) 
+            if (vkString.Equals(KeyboardHookUtilities.shiftKeyName))
+            {
+                hint = string.Empty;
                 return HintKeyStatus.Skip;
+            }
 
             _currentSequence += vkString;
-            if (AutomationElementsDictionary.Instance.ContainsKey(_currentSequence))
+            hint = _currentSequence;
+            if (AutomationElementDictionary.Instance.ContainsKey(_currentSequence))
             {
-                if (AutomationElementsDictionary.Instance.TryGetValue(_currentSequence, out Rect rect))
+                if (AutomationElementDictionary.Instance.TryGetValue(_currentSequence, out Rect rect))
                 {
                     ClickManager.Instance.Click(rect, _shiftPressed, false);
                 }
+
                 _currentSequence = string.Empty;
-                return HintKeyStatus.Pressed;
+
+                if (!_shiftPressed)
+                    return HintKeyStatus.LeftClickPressed;
+                return HintKeyStatus.RightClickPressed;
             }
             else if (_currentSequence.Length >= 2)
             {
@@ -78,7 +88,7 @@ namespace WinVi.Input.Handlers.Modes
         }
         
         /// <summary>
-        /// Resets current sequence counter
+        /// Resets current hint counter
         /// </summary>
         internal static void ResetCurrentSequence()
         {

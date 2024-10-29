@@ -50,7 +50,7 @@ namespace WinVi.UI.Tray
         /// <param name="status">Corresponding resource status</param>
         /// <param name="text">Text to be displayed, optional</param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public static void SetIconStatus(TrayIconStatus status, string text = "???")
+        public static void SetIconStatus(TrayIconStatus status, string text = "")
         {
             switch (status)
             {

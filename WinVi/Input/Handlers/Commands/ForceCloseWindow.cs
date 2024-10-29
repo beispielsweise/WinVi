@@ -1,6 +1,5 @@
 ﻿using WinVi.UI;
 using WinVi.UiAutomation;
-using WinVi.UiAutomation.Elements;
 
 namespace WinVi.Input.Handlers.Commands
 {
@@ -14,7 +13,7 @@ namespace WinVi.Input.Handlers.Commands
             OverlayWindow.Instance.ClearHintCanvas();
             OverlayWindow.Instance.HideWindow();
 
-            AutomationElementsDictionary.Instance.Dispose();
+            AutomationElementDictionary.Instance.Dispose();
         }
     }
 }

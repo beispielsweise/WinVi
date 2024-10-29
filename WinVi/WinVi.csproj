@@ -80,7 +80,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="UiAutomation\AutomationElementsDictionary.cs" />
+    <Compile Include="UiAutomation\AutomationElementDictionary.cs" />
+    <Compile Include="UiAutomation\Elements\ContextMenuElements.cs" />
     <Compile Include="UiAutomation\Elements\TaskbarElements.cs" />
     <Compile Include="UI\Misc\UIKeysGenerator.cs" />
     <Compile Include="UI\Tray\TrayManager.cs" />
