@@ -18,13 +18,13 @@ namespace WinVi.UiAutomation
         private Dictionary<string, Rect> _automationElementDict = new Dictionary<string, Rect>();
        
         /// <summary>
-        /// Retrievs an instance of the dictionary
+        /// Retrievs an instance of the dictionary.
         /// </summary>
         /// <returns>Dictionary<string, Rect></returns>
         internal IReadOnlyDictionary<string, Rect> GetDictionary() { return _automationElementDict; }
 
         /// <summary>
-        /// Adds data from a AutomationElementCollection to the 
+        /// Adds data from a AutomationElementCollection to the _automationELementDict.
         /// UIKeysGenerator is to be reset manually in the parent function
         /// </summary>
         /// <param name="collection">AutomationElementCollection: collection to be added</param>
@@ -37,7 +37,20 @@ namespace WinVi.UiAutomation
         }
 
         /// <summary>
-        /// Clears AutomationELementsDictionary
+        /// Adds data from a AutomationElementCollection to the _automationELementDict and Excludes last element.
+        /// UIKeysGenerator is to be reset manually in the parent function.
+        /// </summary>
+        /// <param name="collection">AutomationElementCollection: collection to be added</param>
+        internal void AddElements(AutomationElementCollection collection, bool removeLastElement)
+        {
+            for(int i = 0; i < collection.Count - 1; i++)
+                _automationElementDict.Add(
+                    UIKeysGenerator.Instance.GetNextKey(),
+                    collection[i].Current.BoundingRectangle);
+        }
+
+        /// <summary>
+        /// Clears AutomationELementsDictionary.
         /// </summary>
         internal void Clear()
         {

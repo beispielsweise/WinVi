@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +17,16 @@ namespace WinVi.UI
     partial class OverlayWindow : Window
     {
         private static OverlayWindow _instance;
+
+        // Variables that customise how hint look. Placeholders, will be used in config system
+        private static int _fontSize = 12;
+        private static FontWeight _fontWeigt = FontWeights.Bold;      // Changable
+        private static Brush _fontForeground = Brushes.Black;         // Changable
+        private static Brush _borderBackground = new SolidColorBrush(Color.FromArgb(80, 255, 255, 0)); // Yellow background with opacity, changable 
+        private static Brush _borderOutline = Brushes.Black;    // Changable
+        private static int _borderThickness = 2;                // Changable
+        private static int _borderCornerRadius = 5;             // Changable
+        private static int _borderPadding = 2;                  // Changable
 
         public OverlayWindow()
         {
@@ -71,7 +82,6 @@ namespace WinVi.UI
         internal void ShowWindow()
         {
             this.Show(); 
-            this.Topmost= true;
         }
 
         /// <summary>
@@ -94,10 +104,10 @@ namespace WinVi.UI
             TextBlock textBlock = new TextBlock
             {
                 Text = text,
-                FontSize = 12,                      // Changable
-                FontWeight = FontWeights.Bold,      // Changable
-                Foreground = Brushes.Black,         // Changable
-                // Margin = new Thickness(),        Changable property, how much distance between border and text
+                FontSize = _fontSize,                   
+                FontWeight = _fontWeigt,      
+                Foreground = _fontForeground,         
+                // Margin = new Thickness(),        Changable property, how much distance between border and text ???
                 HorizontalAlignment = HorizontalAlignment.Left,     
                 VerticalAlignment = VerticalAlignment.Top,
             };
@@ -105,16 +115,16 @@ namespace WinVi.UI
             Border border = new Border
             {
                 Width = textBlock.Width,
-                Background = new SolidColorBrush(Color.FromArgb(80, 255, 255, 0)),  // Yellow background with opacity, changable 
-                BorderBrush = Brushes.Black,                                        // Changable
-                BorderThickness = new Thickness(2),                                 // Changable
-                CornerRadius = new CornerRadius(5),                                 // Changable
-                Padding = new Thickness(2),                                         // Changable
+                Background = _borderBackground, 
+                BorderBrush = _borderOutline,                           
+                BorderThickness = new Thickness(_borderThickness),          
+                CornerRadius = new CornerRadius(_borderCornerRadius),          
+                Padding = new Thickness(_borderPadding),                                         
                 Child = textBlock
             };
 
             Canvas.SetLeft(border, rect.X);
-            Canvas.SetTop(border, rect.Y);
+            Canvas.SetTop(border, rect.Y - _fontSize * 2);
 
             HintCanvas.Children.Add(border);
         }

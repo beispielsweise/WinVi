@@ -23,12 +23,15 @@ namespace WinVi.UiAutomation.Elements
 
         // Left side taskbar, system and user apps only
         private static readonly string _aidTaskbarAppsFrame = "TaskbarFrame";
-        private static readonly string _cnTaskbarSystemApps = "ToggleButton";
+        //private static readonly string _cnTaskbarSystemApps = "ToggleButton";
         private static readonly string _cnTaskbarUserApps = "Taskbar.TaskListButtonAutomationPeer";
 
         // Right side taskbar, tray icons
         private static readonly string _aidSystemTrayIcon = "SystemTrayIcon";
         private static readonly string _aidNotifyItemIcon = "NotifyItemIcon";
+
+        // TODO: For config implementation, so that the last hint element does not go off screen
+        private static bool _isShowDesktopButtonVisible = false;
 
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -42,28 +45,17 @@ namespace WinVi.UiAutomation.Elements
         /// <returns></returns>
         private static AutomationElement GetGlobalTaskbar()
         {
-            /*
-              AutomationElement taskbar = AutomationElement.RootElement
-                  ?? throw new Exception("Root element not found");
-              taskbar = taskbar.FindFirst(
-                  TreeScope.Children,
-                  new PropertyCondition(AutomationElement.ClassNameProperty, _cnGlobalTaskbarName)
-                  )
-                  ?? throw new Exception("SHELL_TrayWnd not found");
-              */
-            // Temp replacement
-            IntPtr hwnd = FindWindow("Shell_TrayWnd", null);
-            if (hwnd == IntPtr.Zero || !IsWindowVisible(hwnd))
-                throw new Exception("SHELL_TrayWnd is not visible or accessible");
-            AutomationElement taskbar = AutomationElement.FromHandle(hwnd);
-            // TODO: Tidy up, I will not address this bug, this is utterly stupid
 
-            testElementChildren(taskbar);
+            AutomationElement taskbar = AutomationElement.RootElement
+                ?? throw new Exception("Root element not found");
+            taskbar = taskbar.FindFirst(
+                TreeScope.Children,
+                new PropertyCondition(AutomationElement.ClassNameProperty, _cnGlobalTaskbarName))
+                ?? throw new Exception("SHELL_TrayWnd not found");
 
             taskbar = taskbar.FindFirst(
                 TreeScope.Descendants,
-                new PropertyCondition(AutomationElement.ClassNameProperty, _cnAllTaskbarElements)
-                )
+                new PropertyCondition(AutomationElement.ClassNameProperty, _cnAllTaskbarElements))
                 ?? throw new Exception("Windows.UI.Input.InputSite.WindowClass not found");
 
             return taskbar;
@@ -88,13 +80,11 @@ namespace WinVi.UiAutomation.Elements
                 new PropertyCondition(AutomationElement.AutomationIdProperty, _aidTaskbarAppsFrame)
                 )
                 ?? throw new Exception("TaskbarFrame not found");
-
-            // Windows and Search elements - bugged, old implementation, issue #8
-            AutomationElementCollection taskbarSystemApps = lTaskbar
+            // Windows and Search elements - bugged, no implementation, issue #8
+            /*AutomationElementCollection taskbarSystemApps = lTaskbar
                 .FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarSystemApps))
-                ?? throw new Exception("ToggleButton system elements not found");
-            AutomationElementDictionary.Instance.AddElements(taskbarSystemApps);
-            // All the other apps on the left side of the taskbar
+                ?? throw new Exception("ToggleButton system elements not found");*/
+            // User-defined apps on the left side of the taskbar
             AutomationElementCollection taskbarUserApps = lTaskbar
                 .FindAll(
                 TreeScope.Children,
@@ -112,7 +102,7 @@ namespace WinVi.UiAutomation.Elements
                     new PropertyCondition(AutomationElement.AutomationIdProperty, _aidNotifyItemIcon),
                     new PropertyCondition(AutomationElement.AutomationIdProperty, _aidSystemTrayIcon)
                 ));
-            AutomationElementDictionary.Instance.AddElements(rTaskbar);
+            AutomationElementDictionary.Instance.AddElements(rTaskbar, _isShowDesktopButtonVisible);
         }
         private static void testCollection(AutomationElementCollection collection)
         {
