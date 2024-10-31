@@ -33,16 +33,11 @@ namespace WinVi.UiAutomation.Elements
         // TODO: For config implementation, so that the last hint element does not go off screen
         private static bool _isShowDesktopButtonVisible = false;
 
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-        [DllImport("user32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool IsWindowVisible(IntPtr hWnd);
         /// <summary>
         /// Get global taskbar AutomationElement
         /// </summary>
         /// <returns></returns>
+        /// <exception cref="Exception">Is thrown in case any elements are empty. This text is then displayed in tray</exception>
         private static AutomationElement GetGlobalTaskbar()
         {
 
@@ -64,21 +59,20 @@ namespace WinVi.UiAutomation.Elements
         /// <summary>
         /// Fills _automationElementsDict with corresponding HintKeys and Positions
         /// </summary>
-        /// <exception cref="ArgumentNullException">Is thrown in case some of the taskbar elements were empty</exception>
-        internal static void FillTaskbarElementsDict()
+        /// <exception cref="Exception">Is thrown in case any elements are empty. This text is then displayed in tray</exception>
+        internal static void GetTaskbarElements()
         {
             AutomationElement taskbar = GetGlobalTaskbar()
                 ?? throw new Exception("Global taskbar not found");
 
-            AutomationElementDictionary.Instance.Clear();
+            AutomationElementDictionary.Instance.Reset();
             UIKeysGenerator.Instance.Reset();
 
             // Left side of the Taskbar
             AutomationElement lTaskbar = taskbar
                 .FindFirst(
                 TreeScope.Subtree,
-                new PropertyCondition(AutomationElement.AutomationIdProperty, _aidTaskbarAppsFrame)
-                )
+                new PropertyCondition(AutomationElement.AutomationIdProperty, _aidTaskbarAppsFrame))
                 ?? throw new Exception("TaskbarFrame not found");
             // Windows and Search elements - bugged, no implementation, issue #8
             /*AutomationElementCollection taskbarSystemApps = lTaskbar
@@ -88,11 +82,9 @@ namespace WinVi.UiAutomation.Elements
             AutomationElementCollection taskbarUserApps = lTaskbar
                 .FindAll(
                 TreeScope.Children,
-                new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarUserApps)
-                )
+                new PropertyCondition(AutomationElement.ClassNameProperty, _cnTaskbarUserApps))
                 ?? throw new Exception("Taskbar.TaskListButtonAutomationPeer");
-
-            AutomationElementDictionary.Instance.AddElements(taskbarUserApps);
+            AutomationElementDictionary.Instance.AddElements(taskbarUserApps, false);
 
             // Right side of the Taskbar
             // Apps in notification tray
@@ -103,22 +95,6 @@ namespace WinVi.UiAutomation.Elements
                     new PropertyCondition(AutomationElement.AutomationIdProperty, _aidSystemTrayIcon)
                 ));
             AutomationElementDictionary.Instance.AddElements(rTaskbar, _isShowDesktopButtonVisible);
-        }
-        private static void testCollection(AutomationElementCollection collection)
-        {
-            foreach (AutomationElement el in collection)
-            {
-                Debug.WriteLine(el.Current.Name + ";\t" + el.Current.ClassName);
-            }
-        }
-
-        private static void testElementChildren(AutomationElement element)
-        {
-            AutomationElementCollection collection = element.FindAll(TreeScope.Descendants, System.Windows.Automation.Condition.TrueCondition);
-            foreach (AutomationElement el in collection)
-            {
-                Debug.WriteLine(el.Current.AutomationId + ";\t" + el.Current.ClassName);
-            }
         }
     }
 }

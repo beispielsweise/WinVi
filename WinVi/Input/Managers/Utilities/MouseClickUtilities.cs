@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static WinVi.Input.ClickManager;
 
-namespace WinVi.Input.Utilities
+namespace WinVi.Input.Managers.Utilities
 {
     internal class MouseClickUtilities
     {

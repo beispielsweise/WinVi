@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
-using WinVi.Input.Utilities;
+using WinVi.Input.Managers.Utilities;
 using WinVi.UI;
 
 namespace WinVi.Input
@@ -24,9 +24,9 @@ namespace WinVi.Input
         /// <summary>
         /// Preforms a right or left click
         /// </summary>
-        /// <param name="rect">Rectangle with the position coordinates</param>
-        /// <param name="invokeRightClick">If right click should be performed</param>
-        /// <param bame="returnCursor">If the cursor should be returned to it's initial position, default = true</param>е
+        /// <param name="rect">Rect: Rectangle with the position coordinates</param>
+        /// <param name="invokeRightClick">bool: If right click should be performed</param>
+        /// <param bame="returnCursor">bool: If the cursor should be returned to it's initial position, default = true</param>
         public void Click(Rect rect, bool invokeRightClick, bool returnCursor = true)
         {
             MouseClickUtilities.CursorPoint currentCursorPos = GetCurrentCursorPos();

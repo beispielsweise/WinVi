@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Threading;
 using WinVi.UiAutomation;
 
 namespace WinVi.UI
@@ -18,7 +19,7 @@ namespace WinVi.UI
     {
         private static OverlayWindow _instance;
 
-        // Variables that customise how hint look. Placeholders, will be used in config system
+        // TODO: Variables that customise how hint look. Placeholders, will be used in config system
         private static int _fontSize = 12;
         private static FontWeight _fontWeigt = FontWeights.Bold;      // Changable
         private static Brush _fontForeground = Brushes.Black;         // Changable
@@ -26,7 +27,7 @@ namespace WinVi.UI
         private static Brush _borderOutline = Brushes.Black;    // Changable
         private static int _borderThickness = 2;                // Changable
         private static int _borderCornerRadius = 5;             // Changable
-        private static int _borderPadding = 2;                  // Changable
+        private static int _borderPadding = 1;                  // Changable
 
         public OverlayWindow()
         {
@@ -71,27 +72,15 @@ namespace WinVi.UI
             HintCanvas.Height = SystemParameters.PrimaryScreenHeight;
             HintCanvas.Width = SystemParameters.PrimaryScreenWidth;
         }
-        
-        // Redundant, replace
-        internal void HideWindow()
-        {
-            this.Hide();
-        }
-
-        // Redundant, replace
-        internal void ShowWindow()
-        {
-            this.Show(); 
-        }
 
         /// <summary>
         /// Initializes the process of drawing keys to the overlay window 
         /// </summary>
         /// <param name="dict"></param>
-        internal void DrawHintCanvas()
+        internal void DrawHintCanvas(bool shiftHintsUpwards = false)
         {
             foreach (KeyValuePair<string, Rect> kvp in AutomationElementDictionary.Instance.GetDictionary())
-                CreateHintBlock(kvp.Key, kvp.Value);
+                CreateHintBlock(kvp.Key, kvp.Value, shiftHintsUpwards);
         }
 
         /// <summary>
@@ -99,7 +88,7 @@ namespace WinVi.UI
         /// </summary>
         /// <param name="text">Text to be displayed over the element</param>
         /// <param name="rect">Position of the element</param>
-        private void CreateHintBlock(string text, System.Windows.Rect rect)
+        private void CreateHintBlock(string text, System.Windows.Rect rect, bool shiftHintsUpwards)
         {
             TextBlock textBlock = new TextBlock
             {
@@ -123,9 +112,9 @@ namespace WinVi.UI
                 Child = textBlock
             };
 
+            int hintShiftAmount = shiftHintsUpwards ? 0 : _fontSize * 2;
             Canvas.SetLeft(border, rect.X);
-            Canvas.SetTop(border, rect.Y - _fontSize * 2);
-
+            Canvas.SetTop(border, rect.Y - hintShiftAmount);
             HintCanvas.Children.Add(border);
         }
 

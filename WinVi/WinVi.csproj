@@ -70,11 +70,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Input\Handlers\HintKeyProcessor.cs" />
+    <Compile Include="Input\Handlers\Modes\ContextMenuSubmode.cs" />
     <Compile Include="Input\Managers\ClickManager.cs" />
     <Compile Include="Input\Handlers\Modes\TaskbarMode.cs" />
-    <Compile Include="Input\Handlers\Commands\ForceCloseWindow.cs" />
+    <Compile Include="Input\Handlers\Commands\ClearOverlayAndData.cs" />
     <Compile Include="Input\Managers\HookManager.cs" />
-    <Compile Include="Input\Utilities\MouseClickUtilities.cs" />
+    <Compile Include="Input\Managers\Utilities\MouseClickUtilities.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -93,7 +95,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Input\Utilities\KeyboardHookUtilities.cs" />
+    <Compile Include="Input\Managers\Utilities\KeyboardHookUtilities.cs" />
     <Compile Include="UI\OvelayWindow.xaml.cs">
       <DependentUpon>OvelayWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -113,7 +115,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.manifest" />
-    <Content Include="Input\temp.txt" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

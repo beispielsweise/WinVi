@@ -27,7 +27,7 @@ namespace WinVi
             _ = UIKeysGenerator.Instance;
             _ = ClickManager.Instance;
             // Force initialize the Overlay window Instance
-            OverlayWindow.Instance.HideWindow();
+            OverlayWindow.Instance.Hide();
         }
 
         protected override void OnExit(ExitEventArgs e)

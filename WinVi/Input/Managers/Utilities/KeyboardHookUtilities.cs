@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace WinVi.Input.Utilities
+namespace WinVi.Input.Managers.Utilities
 {
     /// <summary>
     /// A class with external functions and constants for the input system

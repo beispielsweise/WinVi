@@ -3,9 +3,10 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Data;
+using WinVi.Input.Handlers;
 using WinVi.Input.Handlers.Commands;
 using WinVi.Input.Handlers.Modes;
-using WinVi.Input.Utilities;
+using WinVi.Input.Managers.Utilities;
 using WinVi.UI;
 using WinVi.UI.Tray;
 using WinVi.UiAutomation;
@@ -25,7 +26,7 @@ namespace WinVi.Input
         private IntPtr _hookID;
         private readonly KeyboardHookUtilities.LowLevelKeyboardProc _proc;
 
-        // 
+        // Other status fields
         private bool _isInsertModeEnabled= false;
         private bool _isOverlayWindowOpened = false;
 
@@ -33,12 +34,11 @@ namespace WinVi.Input
         private bool _ctrlPressed = false;
         private bool _altPressed = false;
         private bool _shiftPressed = false;
+
         private static string vkString = "";
 
-        /// <summary>
-        /// Initialize keyboard hook and handlers 
-        /// </summary>
-        /// <param name="window">Instance of a window, needed to work with the overlay window itself </param>
+        internal static HookManager Instance => _instance.Value;
+
         private HookManager()
         {
             _proc = HookCallback;
@@ -51,8 +51,6 @@ namespace WinVi.Input
                 throw new ArgumentNullException();
             }
         }
-
-        internal static HookManager Instance => _instance.Value;
 
         /// <summary>
         /// Sets a keyboard hook
@@ -83,12 +81,11 @@ namespace WinVi.Input
             {
                 CheckHotkeyButtonPressed(vkString, true);
 
+                // OVERLAY WINDOW OPENED
                 if (!CheckHotkeyCombinationPressed() && !_isInsertModeEnabled)
                 {
-                    // If overlay window is opened, process only these keys
                     if (_isOverlayWindowOpened)
                     {
-                        OverlayWindow.Instance.Show();
                         switch (vkString)
                         {
                             case KeyboardHookUtilities.escapeKeyName:
@@ -99,7 +96,7 @@ namespace WinVi.Input
                                 return (IntPtr)1;
                         }
                     }
-                }
+                } // OVERLAY WINDOW NOT OPENED
                 else if (CheckHotkeyCombinationPressed() && !_isOverlayWindowOpened)
                 {
                     if (_isInsertModeEnabled)
@@ -144,29 +141,48 @@ namespace WinVi.Input
         }
 
         /// <summary>
+        /// Opens OvelayWindow, sets icon statuses for TaskbarMode
+        /// </summary>
+        private void EnterContextMenuSubmode(string hint)
+        {
+            if (ContextMenuSubmode.OpenOverlay(hint))
+            {
+                _isOverlayWindowOpened = true;
+                TrayManager.SetIconStatus(TrayIconStatus.OverlayOn);
+            }
+        }
+        /// <summary>
         /// WHEN Overlay Window is opened, processes hint keys
         /// </summary>
         private void HandleHintKeypress()
         {
-            switch (TaskbarMode.ProcessHintKey(vkString, CheckShiftModifierPressed(), out string hint))
+            switch (HintKeyProcessor.ProcessHintKey(vkString, CheckShiftModifierPressed(), out string hint))
             {
-                case TaskbarMode.HintKeyStatus.LeftClickPressed:
-                    CloseOverlayWindow();
+                case HintKeyProcessor.HintKeyStatus.LeftClickPressed:
+
+                    if (!ContextMenuSubmode.GetContextMenuStatus())
+                    {
+                        CloseOverlayWindow();
+                        return;
+                    }
+                    // GetContextMenu
+
                     return;
-                case TaskbarMode.HintKeyStatus.RightClickPressed:
+                case HintKeyProcessor.HintKeyStatus.RightClickPressed:
                     // TODO: Check if return type is sequence from right click, this should triger context menu and further hint elements
                     // if (sequence != null)
                     // GetContextMenu, FillContextMenuElements
                     // else: 
                     // GetContextMenu (hint);
-                
+
                     // !!! PLACEHOLDER
                     CloseOverlayWindow();
+                    EnterContextMenuSubmode(hint);
                     return;
-                case TaskbarMode.HintKeyStatus.Error:
+                case HintKeyProcessor.HintKeyStatus.Error:
                     TrayManager.SetIconStatus(TrayIconStatus.Default, "Hint does not exist");
                     return;
-                case TaskbarMode.HintKeyStatus.Skip:
+                case HintKeyProcessor.HintKeyStatus.Skip:
                     return;
                 default:
                     return;
@@ -197,15 +213,13 @@ namespace WinVi.Input
         private void CloseOverlayWindow()
         {
             _isOverlayWindowOpened = false;
-            TaskbarMode.ResetCurrentSequence();
-            AutomationElementDictionary.Instance.Dispose() ;
-            ForceCloseWindow.Execute();
+            ClearOverlayAndData.Execute();
             TrayManager.SetIconStatus(TrayIconStatus.Default);
         }
 
         /// <summary>
         /// Checks if buttons CTRL SHIFT and ALT are pressed at the same time. 
-        /// This is a standart shortcut modifyer which is NOT intended to be changed
+        /// This is a standart shortcut modifyer which is NOT intended to be changed.
         /// </summary>
         /// <param name="vkString"> keyboard character pressed</param>
         /// <param name="isKeyDown">is key pressed down</param>

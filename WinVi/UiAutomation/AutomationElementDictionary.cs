@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Automation;
 using WinVi.UI.Misc;
@@ -24,37 +25,27 @@ namespace WinVi.UiAutomation
         internal IReadOnlyDictionary<string, Rect> GetDictionary() { return _automationElementDict; }
 
         /// <summary>
-        /// Adds data from a AutomationElementCollection to the _automationELementDict.
-        /// UIKeysGenerator is to be reset manually in the parent function
-        /// </summary>
-        /// <param name="collection">AutomationElementCollection: collection to be added</param>
-        internal void AddElements(AutomationElementCollection collection)
-        {
-            foreach (AutomationElement element in collection)
-                _automationElementDict.Add(
-                    UIKeysGenerator.Instance.GetNextKey(),
-                    element.Current.BoundingRectangle);
-        }
-
-        /// <summary>
-        /// Adds data from a AutomationElementCollection to the _automationELementDict and Excludes last element.
+        /// Adds data from a AutomationElementCollection to the _automationELementDict. Last element can be excluded
         /// UIKeysGenerator is to be reset manually in the parent function.
         /// </summary>
         /// <param name="collection">AutomationElementCollection: collection to be added</param>
-        internal void AddElements(AutomationElementCollection collection, bool removeLastElement)
+        /// <param name="removeLastElement">bool: does last element need to be excluded</param>
+        internal void AddElements(AutomationElementCollection collection, bool removeLastElement = false)
         {
-            for(int i = 0; i < collection.Count - 1; i++)
+            for (int i = 0; i < (removeLastElement ? collection.Count - 1 : collection.Count); i++)
+            {
                 _automationElementDict.Add(
                     UIKeysGenerator.Instance.GetNextKey(),
                     collection[i].Current.BoundingRectangle);
+            }
         }
 
         /// <summary>
         /// Clears AutomationELementsDictionary.
         /// </summary>
-        internal void Clear()
+        internal void Reset()
         {
-            _automationElementDict ??= new Dictionary<string, Rect>(); 
+            _automationElementDict = new Dictionary<string, Rect>(); 
         }
 
         internal bool ContainsKey(string key)
@@ -71,6 +62,15 @@ namespace WinVi.UiAutomation
         internal void SaveElement()
         {
 
+        }
+
+        public override string ToString()
+        {
+            string result = "";
+            foreach (string hint in _automationElementDict.Keys)
+                result += ( hint + "; " + _automationElementDict.TryGetValue(hint, out Rect rect)) + "\n";
+
+            return result;
         }
 
         public void Dispose()
