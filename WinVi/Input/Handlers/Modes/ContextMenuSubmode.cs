@@ -28,20 +28,18 @@ namespace WinVi.Input.Handlers.Modes
 
         internal static bool OpenOverlay(string hint)
         {
-            try
+            if (ContextMenuElements.GetContextMenu(hint))
             {
-                ContextMenuElements.GetContextMenu(hint);
-            }
-            catch (Exception e)
-            {
-                TrayManager.SetIconStatus(TrayIconStatus.CriticalError, e.Message);
-                return false;
+                // TODO: Debug this, elements disappear
+                _isContextMenuVisible = true;
+                OverlayWindow.Instance.DrawHintCanvas(true);
+                OverlayWindow.Instance.Show();
+                return true;
             }
 
-            OverlayWindow.Instance.DrawHintCanvas(true);
-            OverlayWindow.Instance.Show();
-            return true;
-
+            _isContextMenuVisible = false;
+            TrayManager.SetIconStatus(TrayIconStatus.Default, "No context menu detected");
+            return false;
         }
     }
 }

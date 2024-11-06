@@ -160,22 +160,16 @@ namespace WinVi.Input
             {
                 case HintKeyProcessor.HintKeyStatus.LeftClickPressed:
 
-                    if (!ContextMenuSubmode.GetContextMenuStatus())
+                    if (ContextMenuSubmode.GetContextMenuStatus())
+                    {
+                        ContextMenuElements.GetContextMenu(hint);
+                        return;
+                    } else
                     {
                         CloseOverlayWindow();
-                        return;
                     }
-                    // GetContextMenu
-
                     return;
                 case HintKeyProcessor.HintKeyStatus.RightClickPressed:
-                    // TODO: Check if return type is sequence from right click, this should triger context menu and further hint elements
-                    // if (sequence != null)
-                    // GetContextMenu, FillContextMenuElements
-                    // else: 
-                    // GetContextMenu (hint);
-
-                    // !!! PLACEHOLDER
                     CloseOverlayWindow();
                     EnterContextMenuSubmode(hint);
                     return;

@@ -16,13 +16,13 @@ namespace WinVi.UiAutomation
         private static readonly Lazy<AutomationElementDictionary> _instance = new Lazy<AutomationElementDictionary>(() => new AutomationElementDictionary(), true);
         internal static AutomationElementDictionary Instance => _instance.Value;
 
-        private Dictionary<string, Rect> _automationElementDict = new Dictionary<string, Rect>();
+        private Dictionary<string, AutomationElement> _automationElementDict = new Dictionary<string, AutomationElement>();
        
         /// <summary>
         /// Retrievs an instance of the dictionary.
         /// </summary>
         /// <returns>Dictionary<string, Rect></returns>
-        internal IReadOnlyDictionary<string, Rect> GetDictionary() { return _automationElementDict; }
+        internal IReadOnlyDictionary<string, AutomationElement> GetDictionary() { return _automationElementDict; }
 
         /// <summary>
         /// Adds data from a AutomationElementCollection to the _automationELementDict. Last element can be excluded
@@ -35,8 +35,7 @@ namespace WinVi.UiAutomation
             for (int i = 0; i < (removeLastElement ? collection.Count - 1 : collection.Count); i++)
             {
                 _automationElementDict.Add(
-                    UIKeysGenerator.Instance.GetNextKey(),
-                    collection[i].Current.BoundingRectangle);
+                    UIKeysGenerator.Instance.GetNextKey(), collection[i]);
             }
         }
 
@@ -45,7 +44,7 @@ namespace WinVi.UiAutomation
         /// </summary>
         internal void Reset()
         {
-            _automationElementDict = new Dictionary<string, Rect>(); 
+            _automationElementDict = new Dictionary<string, AutomationElement>(); 
         }
 
         internal bool ContainsKey(string key)
@@ -55,22 +54,28 @@ namespace WinVi.UiAutomation
 
         internal bool TryGetValue(string key, out Rect value)
         {
+            // First, try to get the AutomationElement from the dictionary
+            if (_automationElementDict.TryGetValue(key, out AutomationElement automationElement))
+            {
+                // If successful, retrieve the BoundingRectangle of the element
+                value = automationElement.Current.BoundingRectangle;
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+
+        internal bool TryGetValue(string key, out AutomationElement value)
+        {
             return _automationElementDict.TryGetValue(key, out value);
         }
+
 
         // ??? Possibly not needed, pre-save elements (e.g. for context menus)
         internal void SaveElement()
         {
 
-        }
-
-        public override string ToString()
-        {
-            string result = "";
-            foreach (string hint in _automationElementDict.Keys)
-                result += ( hint + "; " + _automationElementDict.TryGetValue(hint, out Rect rect)) + "\n";
-
-            return result;
         }
 
         public void Dispose()

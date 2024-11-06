@@ -20,17 +20,21 @@ namespace WinVi.UiAutomation.Elements
     {
         // How much time does it take for a new window to fully render (ControlType.Menu in this case)
         // System-dependant, user will customise it
-        private static readonly int _minRenderingThreshold = 100;
+        private static readonly int _minRenderingThreshold = 50;
         private static int _customRenderingThreshold = _minRenderingThreshold;
+
+        private static readonly PropertyCondition _separator = new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Separator);
+        private static readonly PropertyCondition _menuItem = new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.MenuItem);
+        private static readonly PropertyCondition _menu= new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Menu);
 
         /// <summary>
         /// Checks for context menus near the current element. 
         /// </summary>
         /// <param name="hint"></param>
         /// <exception cref="ArgumentNullException">Is thrown in case MenuItems were not found</exception>
-        internal static void GetContextMenu(string hint)
+        internal static bool GetContextMenu(string hint)
         {
-            AutomationElementDictionary.Instance.GetDictionary().TryGetValue(hint, out Rect rect);
+            AutomationElementDictionary.Instance.GetDictionary().TryGetValue(hint, out AutomationElement rect);
             AutomationElementDictionary.Instance.Reset();
             UIKeysGenerator.Instance.Reset();
 
@@ -38,16 +42,26 @@ namespace WinVi.UiAutomation.Elements
 
             // Defult Controltype.Menu element with ControlType.MenuItem items
             AutomationElement menu = AutomationElement.RootElement
-                .FindFirst(TreeScope.Children, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Menu))
-                ?? throw new Exception("Increase rendering Threshold, no menu");
-            AutomationElementCollection menuItems = menu.FindAll(TreeScope.Children, new PropertyCondition(AutomationElement.IsInvokePatternAvailableProperty, true))
-                ?? throw new Exception("Increase rendering Threshold, no menu elements");
-
-            if (menuItems != null)
-                AutomationElementDictionary.Instance.AddElements(menuItems);
+                .FindFirst(TreeScope.Children, _menu);
+            if (menu != null)
+            {
+                AutomationElementCollection menuItems = menu.FindAll(
+                TreeScope.Children,
+                new AndCondition(
+                    new NotCondition(_separator),
+                    _menuItem));
+                if (menuItems != null)
+                {
+                    AutomationElementDictionary.Instance.AddElements(menuItems);
+                    return true;
+                }
+            }
 
             // Other types of menus
+            // 
 
+            // No elements detected
+            return false;
         }
         private static void testCollection(AutomationElementCollection collection)
         {

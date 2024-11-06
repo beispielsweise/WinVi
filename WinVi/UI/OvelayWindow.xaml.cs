@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -79,8 +80,8 @@ namespace WinVi.UI
         /// <param name="dict"></param>
         internal void DrawHintCanvas(bool shiftHintsUpwards = false)
         {
-            foreach (KeyValuePair<string, Rect> kvp in AutomationElementDictionary.Instance.GetDictionary())
-                CreateHintBlock(kvp.Key, kvp.Value, shiftHintsUpwards);
+            foreach (KeyValuePair<string, AutomationElement> kvp in AutomationElementDictionary.Instance.GetDictionary())
+                CreateHintBlock(kvp.Key, kvp.Value.Current.BoundingRectangle, shiftHintsUpwards);
         }
 
         /// <summary>
